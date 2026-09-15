@@ -6,7 +6,7 @@ import heroImage from "@/public/hero.png"
 export function Hero() {
   return (
     <section
-      className="relative isolate grid min-h-svh grid-cols-1 grid-rows-1 overflow-hidden"
+      className="canvas-panel isolate grid min-h-[calc(100svh-2*var(--canvas-gutter))] grid-cols-1 grid-rows-1"
       aria-labelledby="hero-title"
     >
       <Image
@@ -20,7 +20,7 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,45,28,0.93)_0%,rgba(18,45,28,0.76)_35%,rgba(18,45,28,0.12)_72%),linear-gradient(0deg,rgba(237,246,239,0.96)_0%,transparent_18%)] max-md:bg-[linear-gradient(0deg,rgba(18,45,28,0.92)_0%,rgba(18,45,28,0.58)_52%,rgba(18,45,28,0.10)_100%)]"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,45,28,0.93)_0%,rgba(18,45,28,0.76)_35%,rgba(18,45,28,0.12)_72%)] max-md:bg-[linear-gradient(0deg,rgba(18,45,28,0.92)_0%,rgba(18,45,28,0.58)_52%,rgba(18,45,28,0.10)_100%)]"
       />
       <div className="flex flex-col items-start justify-center px-5 pt-28 pb-12 max-sm:justify-end max-sm:pt-22 max-sm:pb-8 sm:px-8 md:w-1/2 md:px-[clamp(2rem,5vw,4.25rem)]">
         <h1

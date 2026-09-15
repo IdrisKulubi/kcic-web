@@ -267,7 +267,7 @@ export function SiteHeader() {
           <Image
             src={logo}
             alt="Kenya Climate Innovation Center"
-            sizes="90px"
+            sizes="48px"
             preload
           />
         </Link>

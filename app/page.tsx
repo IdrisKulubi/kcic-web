@@ -2,6 +2,7 @@ import { Hero } from "@/components/hero"
 import { ClimateChallenge } from "@/components/climate-challenge"
 import { WhatWeBelieve } from "@/components/what-we-believe"
 import { ImpactOverview } from "@/components/impact-overview"
+import { AwardsRecognition } from "@/components/awards-recognition"
 import { SiteFooter } from "@/components/site-footer"
 
 export default function Page() {
@@ -21,6 +22,7 @@ export default function Page() {
           <ClimateChallenge />
           <WhatWeBelieve />
           <ImpactOverview />
+          <AwardsRecognition />
         </main>
         <SiteFooter />
       </div>

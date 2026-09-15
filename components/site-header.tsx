@@ -35,7 +35,7 @@ import {
 } from "@phosphor-icons/react"
 import type { Icon } from "@phosphor-icons/react"
 import logo from "@/public/KCIC logo.png"
-import styles from "./site-header.module.css"
+import { cn } from "@/lib/utils"
 
 type NavItem = { title: string; description: string; href: string; icon: Icon }
 const groups: { title: string; items: NavItem[] }[] = [
@@ -236,7 +236,7 @@ export function SiteHeader() {
   return (
     <header
       ref={header}
-      className={styles.position}
+      className="sticky top-5 z-30 mx-auto mt-6 w-[calc(100%-3rem)] max-w-[70rem] font-sans text-[#27332a] max-[1050px]:top-3 max-[1050px]:mt-4 max-[1050px]:w-[calc(100%-2rem)]"
       data-scrolled={scrolled}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) close()
@@ -254,13 +254,23 @@ export function SiteHeader() {
         }
       }}
     >
-      <a href="#main-content" className={styles.skip}>
+      <a
+        href="#main-content"
+        className="absolute top-[-7.5rem] left-4 z-50 rounded-lg bg-white px-5 py-3 focus:top-0"
+      >
         Skip to content
       </a>
-      <div className={styles.shell}>
+      <div
+        className={cn(
+          "flex min-h-14 items-center gap-4 rounded-full border border-[#e5e7e3] px-2 py-1.5 pl-4 shadow-[0_3px_5px_rgba(39,51,42,0.04)] transition-[background-color,box-shadow] duration-200 motion-reduce:transition-none max-[1050px]:min-h-13 max-[1050px]:justify-between max-[1050px]:px-2.5 max-[1050px]:pl-3.5",
+          scrolled
+            ? "bg-[#f4f7f2] shadow-[0_4px_8px_rgba(39,51,42,0.07)]"
+            : "bg-white"
+        )}
+      >
         <Link
           href="/"
-          className={styles.logo}
+          className="block w-12 shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13] max-[1050px]:w-[38px]"
           aria-label="KCIC home"
           onClick={close}
         >
@@ -269,13 +279,17 @@ export function SiteHeader() {
             alt="Kenya Climate Innovation Center"
             sizes="48px"
             preload
+            className="block h-auto w-full"
           />
         </Link>
-        <span className={styles.divider} aria-hidden="true" />
+        <span
+          className="h-[22px] w-px shrink-0 bg-[#e6e9e4] max-[1050px]:hidden"
+          aria-hidden="true"
+        />
         <button
           ref={mobileTrigger}
           type="button"
-          className={styles.mobileToggle}
+          className="hidden size-9 cursor-pointer place-items-center rounded-full bg-[#f4f7f2] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13] max-[1050px]:grid"
           aria-expanded={mobileOpen}
           aria-controls="primary-navigation"
           aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
@@ -289,10 +303,13 @@ export function SiteHeader() {
         <nav
           id="primary-navigation"
           aria-label="Main navigation"
-          className={styles.navigation}
+          className={cn(
+            "flex min-w-0 flex-1 items-center justify-between gap-4 max-[1050px]:absolute max-[1050px]:top-[calc(100%+0.625rem)] max-[1050px]:right-0 max-[1050px]:left-0 max-[1050px]:max-h-[calc(100dvh-7.875rem)] max-[1050px]:flex-col max-[1050px]:items-stretch max-[1050px]:gap-4 max-[1050px]:overflow-y-auto max-[1050px]:rounded-[18px] max-[1050px]:bg-white max-[1050px]:p-4 max-[1050px]:shadow-[0_12px_36px_rgba(39,51,42,0.10)]",
+            mobileOpen ? "max-[1050px]:flex" : "max-[1050px]:hidden"
+          )}
           data-mobile-open={mobileOpen}
         >
-          <ul className={styles.navList}>
+          <ul className="m-0 flex list-none items-center gap-1 p-0 max-[1050px]:flex-col max-[1050px]:items-stretch">
             {groups.map((group, index) => {
               const expanded = open === group.title
               const active = group.items.some(
@@ -300,11 +317,14 @@ export function SiteHeader() {
                   pathname === item.href || pathname.startsWith(item.href + "/")
               )
               return (
-                <li key={group.title} className={styles.group}>
+                <li key={group.title} className="relative">
                   <button
                     type="button"
                     data-group={group.title}
-                    className={styles.trigger}
+                    className={cn(
+                      "flex min-h-9 cursor-pointer items-center justify-between gap-1.5 rounded-full px-2 text-[13px] font-medium whitespace-nowrap transition-colors duration-150 hover:bg-[#f0f7e9] hover:text-[#315e13] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-12 max-[1050px]:w-full max-[1050px]:px-3 max-[1050px]:text-[15px]",
+                      (expanded || active) && "bg-[#f0f7e9] text-[#315e13]"
+                    )}
                     data-active={active}
                     aria-expanded={expanded}
                     aria-controls={`nav-panel-${index}`}
@@ -323,40 +343,51 @@ export function SiteHeader() {
                     }}
                   >
                     {group.title}
-                    <CaretDown size={12} weight="bold" />
+                    <CaretDown
+                      size={12}
+                      weight="bold"
+                      className={cn(
+                        "text-[#788173] transition-transform duration-200 motion-reduce:transition-none",
+                        expanded && "rotate-180 text-[#315e13]"
+                      )}
+                    />
                   </button>
                   <div
                     id={`nav-panel-${index}`}
-                    className={styles.panel}
+                    className={cn(
+                      "absolute top-[calc(100%+0.875rem)] left-[-0.5rem] max-h-[calc(100dvh-9.375rem)] w-[355px] overflow-y-auto rounded-[18px] bg-white p-2.5 shadow-[0_12px_36px_rgba(39,51,42,0.10),0_2px_3px_rgba(39,51,42,0.05)] max-[1050px]:static max-[1050px]:max-h-none max-[1050px]:w-full max-[1050px]:px-0 max-[1050px]:pb-1.5 max-[1050px]:shadow-none",
+                      index >= groups.length - 2 &&
+                        "right-[-0.5rem] left-auto max-[1050px]:right-auto"
+                    )}
                     hidden={!expanded}
                   >
-                    <ul>
+                    <ul className="m-0 list-none p-0">
                       {group.items.map(
                         ({ title, description, href, icon: ItemIcon }) => (
                           <li key={href}>
                             <Link
                               href={href}
                               prefetch={false}
-                              className={styles.item}
+                              className="flex min-h-[72px] items-center gap-3.5 rounded-[10px] px-2.5 py-3 no-underline transition-colors duration-150 hover:bg-[#f4f8ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-[68px] max-[1050px]:gap-2.5 max-[1050px]:px-3"
                               onClick={close}
                               aria-current={
                                 pathname === href ? "page" : undefined
                               }
                             >
-                              <span className={styles.icon}>
+                              <span className="grid size-[38px] shrink-0 place-items-center rounded-[10px] border border-[#e4e8e0] text-[#6b7565]">
                                 <ItemIcon size={20} />
                               </span>
-                              <span className={styles.itemCopy}>
-                                <span className={styles.itemTitle}>
+                              <span className="flex min-w-0 flex-col gap-1">
+                                <span className="text-[13px] leading-[1.4] font-medium">
                                   {title}
                                 </span>
-                                <span className={styles.description}>
+                                <span className="text-[11.5px] leading-[1.45] text-[#626b5e] max-[1050px]:text-xs">
                                   {description}
                                 </span>
                               </span>
                               <CaretRight
                                 size={13}
-                                className={styles.itemArrow}
+                                className="ml-auto shrink-0 text-[#7b8377]"
                               />
                             </Link>
                           </li>
@@ -372,7 +403,10 @@ export function SiteHeader() {
                 href="/faqs"
                 prefetch={false}
                 onClick={close}
-                className={styles.trigger}
+                className={cn(
+                  "flex min-h-9 items-center rounded-full px-2 text-[13px] font-medium no-underline transition-colors duration-150 hover:bg-[#f0f7e9] hover:text-[#315e13] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-12 max-[1050px]:w-full max-[1050px]:px-3 max-[1050px]:text-[15px]",
+                  pathname === "/faqs" && "bg-[#f0f7e9] text-[#315e13]"
+                )}
                 aria-current={pathname === "/faqs" ? "page" : undefined}
               >
                 FAQs
@@ -382,7 +416,7 @@ export function SiteHeader() {
           <Link
             href="/contact"
             prefetch={false}
-            className={styles.contact}
+            className="flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-[#7fcc2f] px-4 text-[13px] font-semibold text-[#1b241d] no-underline transition-colors duration-150 hover:bg-[#90d44b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13] max-[1050px]:min-h-12"
             onClick={close}
           >
             Contact us <ArrowUpRight size={16} weight="bold" />

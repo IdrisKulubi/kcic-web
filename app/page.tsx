@@ -3,6 +3,7 @@ import { ClimateChallenge } from "@/components/climate-challenge"
 import { WhatWeBelieve } from "@/components/what-we-believe"
 import { ImpactOverview } from "@/components/impact-overview"
 import { AwardsRecognition } from "@/components/awards-recognition"
+import { NewsInsights } from "@/components/news-insights"
 import { SiteFooter } from "@/components/site-footer"
 
 export default function Page() {
@@ -23,6 +24,7 @@ export default function Page() {
           <WhatWeBelieve />
           <ImpactOverview />
           <AwardsRecognition />
+          <NewsInsights />
         </main>
         <SiteFooter />
       </div>

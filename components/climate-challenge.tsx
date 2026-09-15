@@ -7,23 +7,21 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 import climateImage from "@/public/climate/image.png"
 
-// TODO: replace with confirmed KCIC figures. Each needs a defined value, period
-// and source before launch, and the placeholder note below should be deleted.
 const figures = [
   {
-    value: "0.0M",
-    label: "People affected by climate shocks in Kenya",
-    period: "Period to be confirmed",
+    value: "6.4M",
+    label: "People in Kenya who needed humanitarian assistance during the 2023 drought",
+    period: "UN OCHA Drought Response Plan, 2023",
   },
   {
-    value: "00%",
-    label: "Of national GDP in climate-sensitive sectors",
-    period: "Period to be confirmed",
+    value: "22%",
+    label: "Of Kenya's GDP from agriculture, a climate-sensitive sector",
+    period: "KNBS, 2023",
   },
   {
-    value: "000+",
-    label: "Enterprises supported by KCIC",
-    period: "Since date to be confirmed",
+    value: "3,500+",
+    label: "Climate enterprises supported by KCIC",
+    period: "KCIC, 2012 to date",
   },
 ]
 
@@ -135,11 +133,6 @@ export function ClimateChallenge() {
             </li>
           ))}
         </ul>
-
-        <p className="js-fade mt-6 text-xs tracking-wide text-[#8fa88c]">
-          Placeholder figures, to be replaced with confirmed KCIC data and
-          sources.
-        </p>
       </div>
     </section>
   )

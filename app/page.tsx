@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero"
 import { ClimateChallenge } from "@/components/climate-challenge"
+import { WhatWeBelieve } from "@/components/what-we-believe"
 import { SiteFooter } from "@/components/site-footer"
 
 export default function Page() {
@@ -17,9 +18,10 @@ export default function Page() {
         >
           <Hero />
           <ClimateChallenge />
+          <WhatWeBelieve />
         </main>
+        <SiteFooter />
       </div>
-      <SiteFooter />
     </div>
   )
 }

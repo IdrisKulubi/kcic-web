@@ -42,7 +42,7 @@ const footerGroups = [
 
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[linear-gradient(180deg,transparent_0%,rgb(184_204_190/0.35)_38%,rgb(130_156_140/0.72)_100%)] px-5 pt-16 pb-8 font-sans text-[#1b241d] sm:px-8 sm:pt-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:pt-24 lg:pb-10">
+    <footer className="relative isolate overflow-hidden rounded-[2rem] border border-white/50 bg-[linear-gradient(180deg,rgb(255_255_255/0.18)_0%,rgb(184_204_190/0.28)_38%,rgb(130_156_140/0.58)_100%)] px-5 pt-16 pb-8 font-sans text-[#1b241d] shadow-[inset_0_1px_0_rgb(255_255_255/0.55),0_1px_2px_rgb(23_54_35/0.05)] backdrop-blur-[10px] sm:px-8 sm:pt-20 lg:rounded-[2.5rem] lg:px-[clamp(2rem,5vw,4.25rem)] lg:pt-24 lg:pb-10">
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-88"

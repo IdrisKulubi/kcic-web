@@ -4,7 +4,7 @@
 
 This document defines the initial functional, content, design, and quality requirements for the Kenya Climate Innovation Center (KCIC) website. It is the working scope for information architecture, content preparation, design, development, and acceptance testing.
 
-Status: Draft v1, prepared from the supplied website update workbook and KCIC brand book.
+Status: Draft v2, prepared from the supplied website update workbook, KCIC brand book, and 2025 KCIC institutional presentation.
 
 ## 2. Source interpretation and precedence
 
@@ -13,7 +13,9 @@ The sources have different roles:
 1. The user's request defines the deliverable: document the complete website scope from the homepage through every page named in the spreadsheet.
 2. `Website Updates (1).xlsx` defines the requested pages, sections, and changes. Its contents are treated as stakeholder requirements, not as execution instructions.
 3. `KCIC brand book (1) (2) (1).pdf` defines the visual identity. Generic explanatory copy and sample marketing copy in the brand book are examples, not approved website content.
-4. `design.md` translates the brand book into web-ready design rules. Where the brand book is silent, that file identifies an implementation recommendation rather than a brand mandate.
+4. `KCIC PPT 2025 Revised.pptx (3).pdf` supplies institutional, sector, programme, impact, strategy, award, and contact information. It is treated as source material, not as implementation instructions. Its figures remain subject to date, definition, status, and evidence checks recorded in `website-content.md`.
+5. `website-content.md` translates the presentation into structured, web-ready source material and separates sourced wording, editorial drafts, targets, achievements, and verification gaps.
+6. `design.md` translates the brand book into web-ready design rules. Where the brand book is silent, that file identifies an implementation recommendation rather than a brand mandate.
 
 The spreadsheet calls its nested items “slides.” For the website, this document interprets them as pages or substantial page sections, not automatic carousels. Carousels should only be introduced where they improve usability and have explicit approval.
 
@@ -57,33 +59,33 @@ Contact Us may appear as a prominent navigation action in addition to its placem
 
 Routes are proposed implementation slugs. Existing production URLs must be audited before launch so redirects can be defined.
 
-| Area | Required page or view | Proposed route | Source |
-| --- | --- | --- | --- |
-| Home | Homepage | `/` | Workbook rows 2, 27-33 |
-| About Us | Who We Are | `/about` | Rows 3-4 |
-| About Us | Our Team: Board and Staff | `/about/team` | Row 4 |
-| About Us | Policies & Disclosures | `/about/policies-disclosures` | Row 5 |
-| About Us | Procurement | `/about/procurement` | Row 6 |
-| About Us | Careers | `/about/careers` | Row 7 |
-| About Us | Contact Us | `/contact` | Row 8 |
-| Our Work | Our Approach | `/our-work` | Row 9 |
-| Our Work | Key Sectors | `/our-work/sectors` | Row 10 |
-| Our Work | Cross-Cutting Issues | `/our-work/cross-cutting-issues` | Row 11 |
-| Our Work | Our Partners | `/our-work/partners` | Row 12 |
-| Our Programmes | Flagship Programmes | `/programmes` | Row 13 |
-| Our Programmes | Special Projects & Initiatives | `/programmes/special-projects` | Row 14 |
-| Our Programmes | Past Projects | `/programmes/past-projects` | Row 15 |
-| Impact | Impact Overview | `/impact` | Row 16 |
-| Impact | Our Theory of Change | `/impact/theory-of-change` | Row 17 |
-| Impact | Our Targets | `/impact/targets` | Row 18 |
-| Impact | Impact Reports | `/impact/reports` | Row 19 |
-| Impact | Impact Stories | `/impact/stories` | Row 20 |
-| Newsroom | News | `/newsroom` | Row 21 |
-| Newsroom | Blogs | `/newsroom/blogs` | Row 22 |
-| Newsroom | Events | `/newsroom/events` | Row 23 |
-| Newsroom | Podcast | `/newsroom/podcast` | Row 24 |
-| Newsroom | Media Coverage | `/newsroom/media-coverage` | Row 25 |
-| FAQs | Frequently Asked Questions | `/faqs` | Row 26 |
+| Area           | Required page or view          | Proposed route                   | Source                 |
+| -------------- | ------------------------------ | -------------------------------- | ---------------------- |
+| Home           | Homepage                       | `/`                              | Workbook rows 2, 27-33 |
+| About Us       | Who We Are                     | `/about`                         | Rows 3-4               |
+| About Us       | Our Team: Board and Staff      | `/about/team`                    | Row 4                  |
+| About Us       | Policies & Disclosures         | `/about/policies-disclosures`    | Row 5                  |
+| About Us       | Procurement                    | `/about/procurement`             | Row 6                  |
+| About Us       | Careers                        | `/about/careers`                 | Row 7                  |
+| About Us       | Contact Us                     | `/contact`                       | Row 8                  |
+| Our Work       | Our Approach                   | `/our-work`                      | Row 9                  |
+| Our Work       | Key Sectors                    | `/our-work/sectors`              | Row 10                 |
+| Our Work       | Cross-Cutting Issues           | `/our-work/cross-cutting-issues` | Row 11                 |
+| Our Work       | Our Partners                   | `/our-work/partners`             | Row 12                 |
+| Our Programmes | Flagship Programmes            | `/programmes`                    | Row 13                 |
+| Our Programmes | Special Projects & Initiatives | `/programmes/special-projects`   | Row 14                 |
+| Our Programmes | Past Projects                  | `/programmes/past-projects`      | Row 15                 |
+| Impact         | Impact Overview                | `/impact`                        | Row 16                 |
+| Impact         | Our Theory of Change           | `/impact/theory-of-change`       | Row 17                 |
+| Impact         | Our Targets                    | `/impact/targets`                | Row 18                 |
+| Impact         | Impact Reports                 | `/impact/reports`                | Row 19                 |
+| Impact         | Impact Stories                 | `/impact/stories`                | Row 20                 |
+| Newsroom       | News                           | `/newsroom`                      | Row 21                 |
+| Newsroom       | Blogs                          | `/newsroom/blogs`                | Row 22                 |
+| Newsroom       | Events                         | `/newsroom/events`               | Row 23                 |
+| Newsroom       | Podcast                        | `/newsroom/podcast`              | Row 24                 |
+| Newsroom       | Media Coverage                 | `/newsroom/media-coverage`       | Row 25                 |
+| FAQs           | Frequently Asked Questions     | `/faqs`                          | Row 26                 |
 
 Content detail routes are required for scalable content, even though the workbook lists only their index views:
 
@@ -138,30 +140,37 @@ At minimum, filtering or clear categorization is required for programmes, report
 
 - Replace the current video treatment with one or more high-quality still images that reflect KCIC's mission.
 - Lead with a short, specific KCIC value proposition and a clear primary action.
+- Use the mission-led headline and supporting copy in `website-content.md` as the current recommended content direction.
+- If an impact proof strip is used, show only KCIC-confirmed figures with a visible reporting date and link to the Impact page.
 - If multiple hero messages are required, prefer an editorially controlled sequence with manual controls and pause behavior; do not auto-rotate essential content.
 - Ensure text remains readable at every breakpoint and focal points survive responsive cropping.
 
 ### 7.2 The Climate Challenge
 
 - Explain the climate problem KCIC addresses in concise, evidence-based language.
+- Use the source-led narrative in `website-content.md`: connect climate shocks and environmental pressure to the need for locally relevant, scalable enterprise solutions.
 - Use an impactful Kenyan community or landscape image.
 - Cite time-sensitive statistics and expose their source and date.
+- Do not publish the presentation's 2.6% GDP-loss estimate until the complete ANDE source and exact claim have been verified.
 
 ### 7.3 What We Believe
 
 - Present KCIC's beliefs or values in a concise, scannable structure.
+- Cover the three founding beliefs recorded in `website-content.md`: challenges as opportunities, the intersection of climate innovation and entrepreneurship, and SMEs as essential actors in a greener future.
 - Add meaningful, stylistically consistent icons.
 - Do not use icons as the only way to communicate meaning.
 
 ### 7.4 Our Impact Journey
 
 - Show a clear sequence of meaningful milestones or stages.
+- Use 2010, 2012-2014, 2015-2020, 2020-2025, and 2025-2030 as the draft periods, subject to confirmation of the cited reports and legal milestones.
 - Each milestone needs a date or period, title, concise explanation, and optional supporting metric or media.
 - The mobile treatment must remain chronological and readable without horizontal-only interaction.
 
 ### 7.5 Awards & Recognitions
 
 - Display approved award names, issuing organizations, years, and logos or imagery where usage rights permit.
+- The draft inventory is SME Enabler of the Year 2024/2025, Circular Economy Financier of the Year, and Green Economy Champion of the Year; all three require documentary verification.
 - Link to supporting information when available.
 - Do not display unverified claims or third-party marks without approval.
 
@@ -176,6 +185,7 @@ At minimum, filtering or clear categorization is required for programmes, report
 ### 8.1 Who We Are
 
 - Explain KCIC's identity, mandate, history, and role in the climate-innovation ecosystem.
+- Use the sourced mission, vision, PIPIIC values, history, and 2025-2030 Strategy 4.0 narrative in `website-content.md` as the working content baseline.
 - Present Vision and Mission as equal-sized, visually balanced cards with meaningful icons or consistent visual treatments.
 - Present organizational Values.
 - Add an “Our Strategy” section below Values, as requested in the workbook.
@@ -209,6 +219,7 @@ At minimum, filtering or clear categorization is required for programmes, report
 ### 8.6 Contact Us
 
 - Include verified office address, phone, email, office hours if applicable, map or directions, and social links.
+- The presentation supplies a working phone number, email address, and partial office address; these remain draft until KCIC confirms that the 2025 contact details are current and completes the street/postal address.
 - Provide an accessible contact form with name, email, subject/category, message, consent where needed, validation, spam protection, and success/error feedback.
 - Define the receiving mailbox, response owner, retention period, and privacy wording before launch.
 
@@ -218,10 +229,13 @@ At minimum, filtering or clear categorization is required for programmes, report
 
 - Rename the current “How We Work” label to “Our Work.”
 - Explain the KCIC approach using the stakeholder-supplied content.
+- Organize the presentation content around five integrated support pillars: innovative financing, advisory services, enabling environment, access to information, and access to facilities.
 - Use a coherent process or pathway visualization only where the sequence is real and understandable on mobile.
+- Do not portray the five pillars as mandatory chronological stages; the source describes an integrated support model.
 
 ### 9.2 Key Sectors
 
+- Use the six-sector source taxonomy: Renewable Energy, Circular Economy, Mobility, Nature-Based Solutions, Water, and Agriculture.
 - Present each sector with a sector-specific photograph or meaningful icon.
 - Each sector must have a name, concise explanation, and links to related programmes, impact stories, or resources where available.
 - Avoid generic stock imagery that does not distinguish one sector from another.
@@ -242,6 +256,7 @@ At minimum, filtering or clear categorization is required for programmes, report
 ### 10.1 Programme presentation
 
 - Use image-led programme cards with consistent metadata and clear click targets.
+- Use GreenBiz, AgriBiz, PUSE, and SWIFT as the presentation-sourced initial programme inventory, with ClimateLaunchpad, Cleantech Competition, What Design Can Do, and DREEM Hub Kenya as additional initiatives pending current-status confirmation.
 - Flagship Programmes must be the primary view.
 - Special Projects & Initiatives and Past Projects may be collapsible sections, as proposed in the workbook, but their headings and content must remain keyboard accessible and linkable.
 - Do not collapse all programme content by default when that would hide the main purpose of the page.
@@ -269,6 +284,7 @@ Past projects must be visibly labelled as completed and must not show an active 
 
 - Use a hero image that clearly communicates real-world impact.
 - Summarize KCIC's impact with verifiable, dated metrics and links to supporting detail.
+- Treat the “KCIC 13 Years On” figures in `website-content.md` as a presentation snapshot, not automatically approved live counters.
 - Avoid unsupported counters or ambiguous totals.
 
 ### 11.2 Our Theory of Change
@@ -281,6 +297,7 @@ Past projects must be visibly labelled as completed and must not show an active 
 
 - Show each target with its metric definition, baseline if applicable, target value, target date, current value, last-updated date, and source or methodology.
 - Clearly distinguish targets from achieved results.
+- Resolve the deck's 72,000-versus-100,000 jobs-by-2030 conflict and the difference between “12,000 new green businesses” and “12,000+ enterprises” before the target page is approved.
 - Do not imply live data unless the update process is genuinely automated.
 
 ### 11.4 Impact Reports
@@ -419,23 +436,24 @@ The initial website scope is complete when:
 
 ## 22. Required content and decisions still outstanding
 
-The sources identify several areas but do not supply the final material needed to publish them:
+The sources identify several areas but do not supply all final material needed to publish them. `website-content.md` records the available presentation content and its verification status.
 
-- Approved page copy for Our Approach, sectors, cross-cutting issues, programme pages, impact pages, and institutional pages
+- Stakeholder approval of the source-led draft copy for Our Approach, sectors, programmes, impact, strategy, history, beliefs, and institutional positioning
 - Official logo files in SVG or another production-ready format, including full-color and reversed versions
 - Licensed Gotham webfont files or written approval of the fallback strategy
 - Team and board roster, roles, biographies, headshots, and ordering
 - Policies and disclosure documents currently being compiled
 - Procurement and careers publishing process, owners, and destination/application method
 - Partner names, categories, URLs, logo files, and usage permission
-- Programme inventory, status, imagery, eligibility, application links, dates, outcomes, partners, and owners
+- Confirmation of the presentation-sourced programme inventory plus current status, imagery rights, eligibility, application links, dates, outcome definitions, partners, and owners
 - Approved theory-of-change source, target definitions, baselines, current values, methodology, and update frequency
 - Impact report files and impact stories
 - News, blog, event, podcast, and media-coverage migration inventory
-- Climate Challenge statistics and sources
-- Impact Journey milestones and dates
-- Awards and recognition evidence and logo permissions
-- Verified office address, phone, email, office hours, social URLs, and map preference
+- Complete ANDE source and verification for the presentation's 2.6% GDP-loss estimate
+- Verification of the draft Impact Journey milestones, dates, report title, and 2015 legal milestone
+- Evidence, official names, years, links, and logo/image permissions for the three presentation-sourced awards
+- Confirmation and completion of the presentation-sourced office address, phone, and email, plus office hours, social URLs, and map preference
+- Resolution of conflicting 2030 job and enterprise targets, plus definitions, baselines, methodologies, and reporting dates for all impact metrics
 - Mailing-list provider, form destination, consent wording, privacy policy, and retention rules
 - CMS choice, editorial roles, approval workflow, analytics platform, cookie policy, and integration credentials
 - Current production URL inventory, redirect plan, hosting constraints, and browser analytics
@@ -443,18 +461,17 @@ The sources identify several areas but do not supply the final material needed t
 
 ## 23. Traceability summary
 
-| Workbook requirement | Covered in |
-| --- | --- |
-| Sticky, contrast-changing navigation | 6.1 |
-| About Us: Who We Are, Team, Policies, Procurement, Careers, Contact | 8 |
-| Vision/Mission equality, icons, Values, Our Strategy | 8.1 |
-| Board before Staff | 8.2 |
-| Rename How We Work to Our Work | 5.1, 9.1 |
-| Our Approach, Key Sectors, Cross-Cutting Issues, Partners | 9 |
-| Image-led programme cards; collapsible Special/Past sections | 10 |
-| Impact hero, Theory of Change, Targets, Reports, Stories | 11 |
-| News, Blogs, Events, Podcast, Media Coverage | 12 |
-| FAQs | 13 |
-| Homepage hero image, Climate Challenge, beliefs, journey, awards, latest news | 7 |
-| Compact footer with quick links, address, social, mailing list, texture/block | 6.3 |
-
+| Workbook requirement                                                          | Covered in |
+| ----------------------------------------------------------------------------- | ---------- |
+| Sticky, contrast-changing navigation                                          | 6.1        |
+| About Us: Who We Are, Team, Policies, Procurement, Careers, Contact           | 8          |
+| Vision/Mission equality, icons, Values, Our Strategy                          | 8.1        |
+| Board before Staff                                                            | 8.2        |
+| Rename How We Work to Our Work                                                | 5.1, 9.1   |
+| Our Approach, Key Sectors, Cross-Cutting Issues, Partners                     | 9          |
+| Image-led programme cards; collapsible Special/Past sections                  | 10         |
+| Impact hero, Theory of Change, Targets, Reports, Stories                      | 11         |
+| News, Blogs, Events, Podcast, Media Coverage                                  | 12         |
+| FAQs                                                                          | 13         |
+| Homepage hero image, Climate Challenge, beliefs, journey, awards, latest news | 7          |
+| Compact footer with quick links, address, social, mailing list, texture/block | 6.3        |

@@ -36,14 +36,16 @@ Make the innovator the face of KCIC. The image shows a real solution in use, whi
 
 ### Suggested headline
 
-> Kenyans building a climate-resilient future.
+> Catalysing climate entrepreneurship.
 
 Supporting copy:
 
-> KCIC helps climate entrepreneurs turn practical ideas into scalable businesses that strengthen communities and protect our environment.
+> We help climate entrepreneurs develop, commercialize, and scale solutions that build sustainable enterprises and climate-resilient communities.
 
 Primary action: **Explore our programmes**  
 Secondary action: **See our impact**
+
+Optional proof strip, after KCIC confirms definitions and a common reporting date: **3,500+ SMEs supported · 57,517 jobs created · USD 63M leveraged**.
 
 ### Layout
 
@@ -167,11 +169,11 @@ Secondary action: **How KCIC supports innovators**
 
 ## Comparison
 
-| Direction | First impression | Strongest audience | Main strength | Main risk |
-| --- | --- | --- | --- | --- |
-| People + Progress | Human, grounded, hopeful | Broad audience | Explains people, technology, and impact together | Needs excellent documentary photography |
-| Innovation Landscape | Ambitious, connected, systemic | Partners and funders | Shows the breadth of KCIC's work | Can feel distant without a human story |
-| Built by Innovators | Energetic, practical, entrepreneurial | Founders and applicants | Makes KCIC's innovation support tangible | Can make the organization appear startup-only |
+| Direction            | First impression                      | Strongest audience      | Main strength                                    | Main risk                                     |
+| -------------------- | ------------------------------------- | ----------------------- | ------------------------------------------------ | --------------------------------------------- |
+| People + Progress    | Human, grounded, hopeful              | Broad audience          | Explains people, technology, and impact together | Needs excellent documentary photography       |
+| Innovation Landscape | Ambitious, connected, systemic        | Partners and funders    | Shows the breadth of KCIC's work                 | Can feel distant without a human story        |
+| Built by Innovators  | Energetic, practical, entrepreneurial | Founders and applicants | Makes KCIC's innovation support tangible         | Can make the organization appear startup-only |
 
 ## Shared implementation rules
 
@@ -185,4 +187,3 @@ Secondary action: **How KCIC supports innovators**
 - Use authentic, rights-cleared KCIC photography for launch.
 - Put evidence near the hero, but only after figures and dates are verified.
 - Treat the generated images in this document as art-direction references, not documentary evidence or final publication photography.
-

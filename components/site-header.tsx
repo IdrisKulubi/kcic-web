@@ -11,7 +11,6 @@ import {
   List,
   X,
   Buildings,
-  Users,
   ShieldCheck,
   Briefcase,
   Envelope,
@@ -45,15 +44,9 @@ const groups: { title: string; items: NavItem[] }[] = [
     items: [
       {
         title: "Who we are",
-        description: "Our purpose, values and strategy",
+        description: "Our purpose, values, strategy and team",
         href: "/about",
         icon: Buildings,
-      },
-      {
-        title: "Our team",
-        description: "Meet our board and staff",
-        href: "/about/team",
-        icon: Users,
       },
       {
         title: "Policies & disclosures",

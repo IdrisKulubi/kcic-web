@@ -20,7 +20,6 @@ type ActionResponse<T = void> =
 export async function listTeamMembers(): Promise<ActionResponse<TeamMemberData[]>> {
   try {
     const members = await db.select().from(teamMembers).orderBy(asc(teamMembers.order));
-      orderBy: [asc(teamMembers.order)]
     const data: TeamMemberData[] = members.map(member => ({
       id: member.id,
       name: member.name,

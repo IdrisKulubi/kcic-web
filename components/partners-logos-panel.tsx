@@ -7,58 +7,12 @@ import type { PartnerLogoItem } from "@/lib/types/partner-logo"
 import { LogoLoop } from "@/components/logo-loop"
 
 const TITLE_ID = "partners-logos-title"
-const EDGE_VIGNETTE = "#152019"
-
-const LOOP_SPEED = 45
-const LOGO_HEIGHT = 36
-const LOGO_GAP = 48
+const PANEL_COLOR = "#27332A"
 
 interface PartnersLogosPanelProps {
   rowOne: PartnerLogoItem[]
   rowTwo: PartnerLogoItem[]
   failed: boolean
-}
-
-function PartnerLogoRow({
-  logos,
-  direction,
-  ariaLabel,
-}: {
-  logos: PartnerLogoItem[]
-  direction: "left" | "right"
-  ariaLabel: string
-}) {
-  return (
-    <div className="relative h-full w-full">
-      <LogoLoop
-        logos={logos}
-        speed={LOOP_SPEED}
-        direction={direction}
-        logoHeight={LOGO_HEIGHT}
-        gap={LOGO_GAP}
-        hoverSpeed={0}
-        fadeOut={false}
-        scaleOnHover
-        ariaLabel={ariaLabel}
-        width="100%"
-        className="h-full w-full text-[#eef3ee]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 w-[clamp(2rem,14%,10rem)]"
-        style={{
-          background: `linear-gradient(to right, ${EDGE_VIGNETTE} 0%, ${EDGE_VIGNETTE}cc 35%, transparent 100%)`,
-        }}
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-10 w-[clamp(2rem,14%,10rem)]"
-        style={{
-          background: `linear-gradient(to left, ${EDGE_VIGNETTE} 0%, ${EDGE_VIGNETTE}cc 35%, transparent 100%)`,
-        }}
-      />
-    </div>
-  )
 }
 
 export function PartnersLogosPanel({
@@ -111,20 +65,39 @@ export function PartnersLogosPanel({
       ) : null}
 
       {!failed && hasLogos ? (
-        <div className="mt-10 flex w-full flex-col gap-5 sm:mt-12 sm:gap-6">
-          <div className="relative h-13 sm:h-14">
-            <PartnerLogoRow
-              logos={rowOne}
-              direction="left"
-              ariaLabel="Partner logos, row 1"
-            />
-          </div>
-          <div className="relative h-13 sm:h-14">
-            <PartnerLogoRow
-              logos={rowTwo}
-              direction="right"
-              ariaLabel="Partner logos, row 2"
-            />
+        <div
+          className="relative mt-10 overflow-hidden sm:mt-12"
+          style={{ height: 200 }}
+        >
+          <div className="flex h-full flex-col justify-center gap-8">
+            {rowOne.length > 0 ? (
+              <LogoLoop
+                logos={rowOne}
+                speed={80}
+                direction="left"
+                logoHeight={48}
+                gap={40}
+                hoverSpeed={0}
+                scaleOnHover
+                fadeOut
+                fadeOutColor={PANEL_COLOR}
+                ariaLabel="Partner logos, row 1"
+              />
+            ) : null}
+            {rowTwo.length > 0 ? (
+              <LogoLoop
+                logos={rowTwo}
+                speed={80}
+                direction="right"
+                logoHeight={48}
+                gap={40}
+                hoverSpeed={0}
+                scaleOnHover
+                fadeOut
+                fadeOutColor={PANEL_COLOR}
+                ariaLabel="Partner logos, row 2"
+              />
+            ) : null}
           </div>
         </div>
       ) : null}

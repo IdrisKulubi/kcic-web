@@ -10,6 +10,7 @@ const footerGroups = [
       { label: "About us", href: "/about" },
       { label: "Our work", href: "/our-work" },
       { label: "Our programmes", href: "/programmes" },
+      { label: "Founders Collective", href: "/founders-collective" },
       { label: "Our impact", href: "/impact" },
     ],
   },
@@ -63,7 +64,7 @@ export function SiteFooter() {
             </p>
             <Link
               href="/contact"
-              className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-[#1b241d] px-5 text-sm font-semibold text-[#f7fbf5] transition-colors duration-200 ease-out hover:bg-[#27332a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13]"
+              className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-[#7FCC2F]  px-5 text-sm font-semibold text-[#f7fbf5] transition-colors duration-200 ease-out hover:bg-[#27332a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13]"
             >
               Contact us
               <span className="ml-2" aria-hidden="true">

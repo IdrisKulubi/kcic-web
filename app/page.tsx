@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero"
 import { ClimateChallenge } from "@/components/climate-challenge"
+import { FoundersCollectiveTeaser } from "@/components/founders-collective-teaser"
 import { WhatWeBelieve } from "@/components/what-we-believe"
 import { ImpactOverview } from "@/components/impact-overview"
 import { AwardsRecognition } from "@/components/awards-recognition"
@@ -22,6 +23,7 @@ export default function Page() {
         >
           <Hero />
           <ClimateChallenge />
+          <FoundersCollectiveTeaser />
           <WhatWeBelieve />
           <ImpactOverview />
           <AwardsRecognition />

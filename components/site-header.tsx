@@ -32,6 +32,7 @@ import {
   CalendarBlank,
   Microphone,
   Broadcast,
+  UsersThree,
 } from "@phosphor-icons/react"
 import type { Icon } from "@phosphor-icons/react"
 import logo from "@/public/KCIC logo.png"
@@ -123,6 +124,12 @@ const groups: { title: string; items: NavItem[] }[] = [
         description: "New possibilities for climate action",
         href: "/programmes/special-projects",
         icon: Sparkle,
+      },
+      {
+        title: "Founders Collective",
+        description: "A founder-first community for climate entrepreneurs",
+        href: "/founders-collective",
+        icon: UsersThree,
       },
       {
         title: "Past projects",

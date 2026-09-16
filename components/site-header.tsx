@@ -164,12 +164,7 @@ const groups: { title: string; items: NavItem[] }[] = [
         href: "/impact/reports",
         icon: Files,
       },
-      {
-        title: "Impact stories",
-        description: "Meet the people behind the progress",
-        href: "/impact/stories",
-        icon: BookOpen,
-      },
+     
     ],
   },
   {
@@ -181,30 +176,30 @@ const groups: { title: string; items: NavItem[] }[] = [
         href: "/newsroom",
         icon: Newspaper,
       },
-      {
-        title: "Blogs",
-        description: "Ideas and perspectives on climate",
-        href: "/newsroom/blogs",
-        icon: PencilLine,
-      },
-      {
-        title: "Events",
-        description: "Connect, learn and get involved",
-        href: "/newsroom/events",
-        icon: CalendarBlank,
-      },
+      // {
+      //   title: "Blogs",
+      //   description: "Ideas and perspectives on climate",
+      //   href: "/newsroom/blogs",
+      //   icon: PencilLine,
+      // },
+      // {
+      //   title: "Events",
+      //   description: "Connect, learn and get involved",
+      //   href: "/newsroom/events",
+      //   icon: CalendarBlank,
+      // },
       {
         title: "Podcast",
         description: "Listen to climate conversations",
         href: "/newsroom/podcast",
         icon: Microphone,
       },
-      {
-        title: "Media coverage",
-        description: "KCIC in the headlines",
-        href: "/newsroom/media-coverage",
-        icon: Broadcast,
-      },
+      // {
+      //   title: "Media coverage",
+      //   description: "KCIC in the headlines",
+      //   href: "/newsroom/media-coverage",
+      //   icon: Broadcast,
+      // },
     ],
   },
 ]

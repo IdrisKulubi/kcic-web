@@ -22,7 +22,7 @@ export function WorkSectors() {
     <section
       id="sectors"
       aria-labelledby="work-sectors-title"
-      className="canvas-panel scroll-mt-24 bg-[#f7fbf5] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
+      className="canvas-panel scroll-mt-32 bg-[#f7fbf5] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
     >
       <div className="mx-auto max-w-7xl">
         <p className="m-0 text-[0.7rem] font-medium tracking-[0.18em] text-[#315e13] uppercase">

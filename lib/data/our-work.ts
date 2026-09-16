@@ -13,25 +13,21 @@ export const ourWorkIndex = {
       number: "01",
       title: "Our approach",
       href: "/our-work#approach",
-      pageHref: "/our-work",
     },
     {
       number: "02",
       title: "Key sectors",
-      href: "/our-work/sectors",
-      pageHref: "/our-work/sectors",
+      href: "/our-work#sectors",
     },
     {
       number: "03",
       title: "Cross-cutting issues",
-      href: "/our-work/cross-cutting-issues",
-      pageHref: "/our-work/cross-cutting-issues",
+      href: "/our-work#cross-cutting",
     },
     {
       number: "04",
       title: "Our partners",
-      href: "/our-work/partners",
-      pageHref: "/our-work/partners",
+      href: "/our-work#partners",
     },
   ],
 }

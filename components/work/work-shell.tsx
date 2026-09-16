@@ -1,6 +1,7 @@
 import type { ReactNode } from "react"
 
 import { SiteFooter } from "@/components/site-footer"
+import { WorkHashScroll } from "@/components/work/work-hash-scroll"
 
 export function WorkShell({ children }: { children: ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export function WorkShell({ children }: { children: ReactNode }) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(127,204,47,0.14),transparent_26%),radial-gradient(circle_at_88%_72%,rgba(0,173,239,0.08),transparent_24%)]"
       />
+      <WorkHashScroll />
       <div className="relative z-10 flex flex-col gap-(--canvas-gutter) p-(--canvas-gutter)">
         <main
           id="main-content"

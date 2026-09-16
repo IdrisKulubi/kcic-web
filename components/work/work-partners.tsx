@@ -12,7 +12,7 @@ export function WorkPartners({ partners, failed = false }: WorkPartnersProps) {
     <section
       id="partners"
       aria-labelledby="work-partners-title"
-      className="canvas-panel scroll-mt-24 bg-[#e8eee6] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
+      className="canvas-panel scroll-mt-32 bg-[#e8eee6] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
     >
       <div className="mx-auto max-w-7xl">
         <p className="m-0 text-[0.7rem] font-medium tracking-[0.18em] text-[#315e13] uppercase">

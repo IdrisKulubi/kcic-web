@@ -1,8 +1,6 @@
 import type { Metadata } from "next"
 
-import { WorkIndex } from "@/components/work/work-index"
-import { WorkSectors } from "@/components/work/work-sectors"
-import { WorkShell } from "@/components/work/work-shell"
+import { WorkHashRedirect } from "@/components/work/work-hash-redirect"
 import { workPageMeta } from "@/lib/data/our-work"
 
 export const metadata: Metadata = {
@@ -11,10 +9,5 @@ export const metadata: Metadata = {
 }
 
 export default function KeySectorsPage() {
-  return (
-    <WorkShell>
-      <WorkIndex />
-      <WorkSectors />
-    </WorkShell>
-  )
+  return <WorkHashRedirect href="/our-work#sectors" />
 }

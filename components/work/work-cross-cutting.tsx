@@ -8,7 +8,7 @@ export function WorkCrossCutting() {
     <section
       id="cross-cutting"
       aria-labelledby="work-cross-title"
-      className="canvas-panel scroll-mt-24 overflow-hidden bg-[#27332A] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
+      className="canvas-panel scroll-mt-32 overflow-hidden bg-[#27332A] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
     >
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
         <div>

@@ -8,7 +8,7 @@ export function WorkApproach() {
     <section
       id="approach"
       aria-labelledby="work-approach-title"
-      className="canvas-panel scroll-mt-24 overflow-hidden bg-[#eef3eb] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
+      className="canvas-panel scroll-mt-32 overflow-hidden bg-[#eef3eb] px-5 py-16 sm:px-8 sm:py-20 lg:px-[clamp(2rem,5vw,4.25rem)] lg:py-24"
     >
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] lg:items-start lg:gap-16">
         <div className="lg:sticky lg:top-28">

@@ -44,7 +44,7 @@ export function PartnersLogosPanel({
         <p className="mt-10 px-4 text-center text-sm leading-relaxed text-[#b8c4b8] sm:px-8">
           Partner logos could not be loaded right now.{" "}
           <Link
-            href="/our-work/partners"
+            href="/our-work#partners"
             className="font-medium text-[#7fcc2f] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fcc2f]"
           >
             View partners
@@ -56,7 +56,7 @@ export function PartnersLogosPanel({
         <p className="mt-10 px-4 text-center text-sm leading-relaxed text-[#b8c4b8] sm:px-8">
           Partner logos will appear here.{" "}
           <Link
-            href="/our-work/partners"
+            href="/our-work#partners"
             className="font-medium text-[#7fcc2f] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fcc2f]"
           >
             Our partners

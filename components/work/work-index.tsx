@@ -1,9 +1,9 @@
 import Image from "next/image"
-import Link from "next/link"
 
 import climateImage from "@/public/work/work2.jpg"
 import fieldImage from "@/public/work/team1.jpg"
 import peopleImage from "@/public/work/work3.jpg"
+import { WorkChapterNav } from "@/components/work/work-chapter-nav"
 import { ourWorkIndex } from "@/lib/data/our-work"
 
 export function WorkIndex() {
@@ -28,31 +28,7 @@ export function WorkIndex() {
           </p>
         </div>
 
-        <nav aria-label="Our work chapters" className="lg:pb-2">
-          <ol className="m-0 flex list-none flex-col gap-0 border-t border-[#1b241d]/10 p-0">
-            {ourWorkIndex.chapters.map((chapter) => (
-              <li key={chapter.number} className="border-b border-[#1b241d]/10">
-                <Link
-                  href={chapter.pageHref}
-                  className="group flex min-h-14 items-baseline justify-between gap-4 py-3.5 text-[#1b241d] transition-colors hover:text-[#315e13] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7fcc2f]"
-                >
-                  <span className="text-[0.68rem] font-medium tracking-[0.16em] text-[#315e13] uppercase">
-                    {chapter.number}
-                  </span>
-                  <span className="flex-1 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.05rem] font-medium tracking-[-0.02em]">
-                    {chapter.title}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="text-[#7fcc2f] transition-transform duration-200 group-hover:translate-x-0.5"
-                  >
-                    →
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <WorkChapterNav />
       </div>
 
       <div className="mx-auto mt-14 grid max-w-7xl grid-cols-3 gap-3 sm:mt-16 sm:gap-4 lg:mt-20">

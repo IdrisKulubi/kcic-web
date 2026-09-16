@@ -35,7 +35,12 @@ import {
 } from "@phosphor-icons/react"
 import type { Icon } from "@phosphor-icons/react"
 import logo from "@/public/KCIC logo.png"
+import { handleSamePageHashClick } from "@/components/work/work-hash-scroll"
 import { cn } from "@/lib/utils"
+
+function hrefPath(href: string) {
+  return href.split("#")[0]
+}
 
 type NavItem = { title: string; description: string; href: string; icon: Icon }
 const groups: { title: string; items: NavItem[] }[] = [
@@ -80,25 +85,25 @@ const groups: { title: string; items: NavItem[] }[] = [
       {
         title: "Our approach",
         description: "How we support climate innovation",
-        href: "/our-work",
+        href: "/our-work#approach",
         icon: Compass,
       },
       {
         title: "Key sectors",
         description: "Where innovation makes a difference",
-        href: "/our-work/sectors",
+        href: "/our-work#sectors",
         icon: Leaf,
       },
       {
         title: "Cross-cutting issues",
         description: "The priorities connecting our work",
-        href: "/our-work/cross-cutting-issues",
+        href: "/our-work#cross-cutting",
         icon: Intersect,
       },
       {
         title: "Our partners",
         description: "Working together for lasting change",
-        href: "/our-work/partners",
+        href: "/our-work#partners",
         icon: Handshake,
       },
     ],
@@ -312,10 +317,10 @@ export function SiteHeader() {
           <ul className="m-0 flex list-none items-center gap-1 p-0 max-[1050px]:flex-col max-[1050px]:items-stretch">
             {groups.map((group, index) => {
               const expanded = open === group.title
-              const active = group.items.some(
-                (item) =>
-                  pathname === item.href || pathname.startsWith(item.href + "/")
-              )
+              const active = group.items.some((item) => {
+                const path = hrefPath(item.href)
+                return pathname === path || pathname.startsWith(`${path}/`)
+              })
               return (
                 <li key={group.title} className="relative">
                   <button
@@ -369,9 +374,12 @@ export function SiteHeader() {
                               href={href}
                               prefetch={false}
                               className="flex min-h-[72px] items-center gap-3.5 rounded-[10px] px-2.5 py-3 no-underline transition-colors duration-150 hover:bg-[#f4f8ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-[68px] max-[1050px]:gap-2.5 max-[1050px]:px-3"
-                              onClick={close}
+                              onClick={(event) => {
+                                handleSamePageHashClick(event, href, pathname)
+                                close()
+                              }}
                               aria-current={
-                                pathname === href ? "page" : undefined
+                                pathname === hrefPath(href) ? "page" : undefined
                               }
                             >
                               <span className="grid size-[38px] shrink-0 place-items-center rounded-[10px] border border-[#e4e8e0] text-[#6b7565]">

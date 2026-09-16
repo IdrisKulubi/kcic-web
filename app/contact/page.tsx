@@ -1,23 +1,17 @@
 import type { Metadata } from "next"
 
-import { CareersContact } from "@/components/careers/careers-contact"
-import { CareersHero } from "@/components/careers/careers-hero"
-import { CareersList } from "@/components/careers/careers-list"
+import { ContactHero } from "@/components/contact/contact-hero"
+import { ContactMap } from "@/components/contact/contact-map"
+import { ContactSplit } from "@/components/contact/contact-split"
 import { SiteFooter } from "@/components/site-footer"
-import { listCareerOpportunities } from "@/lib/actions/opportunities"
-import { toCareerListItem } from "@/lib/careers/serialize"
-import { careersMeta } from "@/lib/data/careers"
+import { contactMeta } from "@/lib/data/contact"
 
 export const metadata: Metadata = {
-  title: `${careersMeta.title} | KCIC`,
-  description: careersMeta.description,
+  title: `${contactMeta.title} | KCIC`,
+  description: contactMeta.description,
 }
 
-export default async function CareersPage() {
-  const result = await listCareerOpportunities()
-  const items =
-    result.success && result.data ? result.data.map(toCareerListItem) : []
-
+export default function ContactPage() {
   return (
     <div className="relative -mt-20 overflow-hidden bg-[linear-gradient(180deg,#eaf6f4_0%,#eef6ef_42%,#d7e4d8_72%,#8fa89a_100%)] max-[1050px]:-mt-17">
       <div
@@ -30,9 +24,9 @@ export default async function CareersPage() {
           tabIndex={-1}
           className="flex flex-col gap-(--canvas-gutter) outline-none"
         >
-          <CareersHero />
-          <CareersList items={items} />
-          <CareersContact />
+          <ContactHero />
+          <ContactSplit />
+          <ContactMap />
         </main>
         <SiteFooter />
       </div>

@@ -27,7 +27,7 @@ export const impactOverview = {
   eyebrow: "01 Overview",
   heading: "Thirteen years of climate enterprise impact.",
   snapshotNote:
-    "Figures below are from the “KCIC 13 Years On” presentation slide. They are a snapshot for transparency—not live counters. KCIC will publish a common “as of” date and definitions before these are treated as approved website metrics.",
+    "Figures below are from the “KCIC 13 Years On” presentation slide. They are a snapshot for transparency not live counters. KCIC will publish a common “as of” date and definitions before these are treated as approved website metrics.",
   metrics: [
     {
       id: "smes",
@@ -95,7 +95,7 @@ export const impactTheory = {
   eyebrow: "02 Theory of change",
   heading: "From support to systems change.",
   intro:
-    "KCIC's 2025–2030 strategy shifts from supporting individual ventures toward building integrated climate entrepreneurship ecosystems. The presentation references an Integrated Climate Entrepreneurship Ecosystem (ICEE) model—an approved diagram and full definitions will replace this web summary when KCIC publishes them.",
+    "KCIC's 2025–2030 strategy shifts from supporting individual ventures toward building integrated climate entrepreneurship ecosystems. The presentation references an Integrated Climate Entrepreneurship Ecosystem (ICEE) mode an approved diagram and full definitions will replace this web summary when KCIC publishes them.",
   diagramNote:
     "This page describes the pathway in text. An accessible version of KCIC's official theory-of-change diagram will be added when the source file is approved.",
   stations: [
@@ -146,15 +146,7 @@ export const impactTheory = {
       ],
     },
   ],
-  strategyBarriers: {
-    heading: "Strategy 4.0 responds to four persistent barriers",
-    items: [
-      "Limited access to finance and technical assistance",
-      "Inadequate market systems and enabling environments",
-      "Insufficient community engagement and resilience",
-      "The need for stronger institutional capacity",
-    ],
-  },
+ 
 }
 
 export const impactTargets = {
@@ -162,7 +154,7 @@ export const impactTargets = {
   eyebrow: "03 Targets",
   heading: "Vision 2030 ambitions.",
   intro:
-    "The figures below are targets and ambitions—not achievements. They come from KCIC's “Vision 2030” presentation slide and must not be read alongside the 13-year snapshot in Overview.",
+    "The figures below are targets and ambitions not achievements. They come from KCIC's “Vision 2030” presentation slide and must not be read alongside the 13-year snapshot in Overview.",
   horizonLabel: "2030",
   jobsConflictNote:
     "The Vision 2030 slide lists 100,000 green jobs. A separate strategy journey slide lists 72,000 jobs for 2025–2030. KCIC must confirm the approved target set and whether the figures use different scopes.",

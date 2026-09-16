@@ -110,23 +110,7 @@ export function ImpactTheory() {
           ))}
         </ol>
 
-        <aside
-          className="js-theory-fade mt-12 rounded-[1.25rem] border border-[#1b241d]/8 bg-[#f7fbf5] p-6 sm:p-8 lg:mt-16"
-        >
-          <h3 className="m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-base font-medium tracking-[-0.02em] text-[#1b241d]">
-            {impactTheory.strategyBarriers.heading}
-          </h3>
-          <ul className="mt-4 m-0 flex list-none flex-col gap-2.5 p-0">
-            {impactTheory.strategyBarriers.items.map((item) => (
-              <li
-                key={item}
-                className="border-l-2 border-[#00adef]/50 pl-4 text-sm leading-6 text-[#566159]"
-              >
-                {item}
-              </li>
-            ))}
-          </ul>
-        </aside>
+       
       </div>
     </section>
   )

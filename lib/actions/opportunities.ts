@@ -1,7 +1,9 @@
 'use server';
 
 import { opportunities, opportunityAttachments } from '@/db/schema';
-import { eq, desc, and, or } from 'drizzle-orm/sql';
+import { eq, desc, and, inArray } from 'drizzle-orm/sql';
+import { PROCUREMENT_TYPES } from '@/lib/procurement/constants';
+import { isProcurementType } from '@/lib/procurement/status';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import db from '@/db/drizzle';
@@ -81,6 +83,53 @@ function generateSlug(title: string): string {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '')
         + '-' + nanoid(6);
+}
+
+function revalidateOpportunityPaths(slug?: string) {
+    revalidatePath('/about/careers');
+    revalidatePath('/about/procurement');
+    revalidatePath('/admin/opportunities');
+    if (slug) {
+        revalidatePath(`/about/procurement/${slug}`);
+    }
+}
+
+// List procurement opportunities (RFP, tender, consulting), including inactive for archive
+export async function listProcurementOpportunities(): Promise<{
+    success: boolean;
+    data?: OpportunityData[];
+    error?: string;
+}> {
+    try {
+        const result = await db
+            .select()
+            .from(opportunities)
+            .where(inArray(opportunities.type, PROCUREMENT_TYPES))
+            .orderBy(
+                desc(opportunities.isFeatured),
+                desc(opportunities.issuedDate),
+                desc(opportunities.createdAt)
+            );
+
+        return { success: true, data: result as OpportunityData[] };
+    } catch (error) {
+        console.error('Error listing procurement opportunities:', error);
+        return { success: false, error: 'Failed to fetch procurement opportunities' };
+    }
+}
+
+// Get procurement opportunity by slug (excludes jobs)
+export async function getProcurementBySlug(
+    slug: string
+): Promise<{ success: boolean; data?: OpportunityWithAttachments; error?: string }> {
+    const result = await getOpportunityBySlug(slug);
+    if (!result.success || !result.data) {
+        return result;
+    }
+    if (!isProcurementType(result.data.type)) {
+        return { success: false, error: 'Opportunity not found' };
+    }
+    return result;
 }
 
 // List opportunities with optional filters
@@ -179,8 +228,7 @@ export async function createOpportunity(
             updatedAt: now,
         }).returning();
 
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        revalidateOpportunityPaths(slug);
 
         return { success: true, data: result as OpportunityData };
     } catch (error) {
@@ -230,8 +278,7 @@ export async function updateOpportunity(
             return { success: false, error: 'Opportunity not found' };
         }
 
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        revalidateOpportunityPaths(result.slug);
 
         return { success: true, data: result as OpportunityData };
     } catch (error) {
@@ -261,8 +308,7 @@ export async function toggleOpportunityStatus(
             .where(eq(opportunities.id, id))
             .returning();
 
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        revalidateOpportunityPaths(result.slug);
 
         return { success: true, data: result as OpportunityData };
     } catch (error) {
@@ -276,10 +322,10 @@ export async function deleteOpportunity(
     id: string
 ): Promise<{ success: boolean; error?: string }> {
     try {
+        const existing = await db.select().from(opportunities).where(eq(opportunities.id, id)).limit(1);
         await db.delete(opportunities).where(eq(opportunities.id, id));
 
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        revalidateOpportunityPaths(existing[0]?.slug);
 
         return { success: true };
     } catch (error) {
@@ -319,8 +365,8 @@ export async function addOpportunityAttachment(
             createdAt: new Date(),
         }).returning();
 
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        const parent = await db.select().from(opportunities).where(eq(opportunities.id, opportunityId)).limit(1);
+        revalidateOpportunityPaths(parent[0]?.slug);
 
         return { success: true, data: result as AttachmentData };
     } catch (error) {
@@ -334,10 +380,23 @@ export async function removeOpportunityAttachment(
     attachmentId: string
 ): Promise<{ success: boolean; error?: string }> {
     try {
-        await db.delete(opportunityAttachments).where(eq(opportunityAttachments.id, attachmentId));
-
-        revalidatePath('/about/careers');
-        revalidatePath('/admin/opportunities');
+        const attachment = await db
+            .select()
+            .from(opportunityAttachments)
+            .where(eq(opportunityAttachments.id, attachmentId))
+            .limit(1);
+        if (attachment[0]) {
+            const parent = await db
+                .select()
+                .from(opportunities)
+                .where(eq(opportunities.id, attachment[0].opportunityId))
+                .limit(1);
+            await db.delete(opportunityAttachments).where(eq(opportunityAttachments.id, attachmentId));
+            revalidateOpportunityPaths(parent[0]?.slug);
+        } else {
+            await db.delete(opportunityAttachments).where(eq(opportunityAttachments.id, attachmentId));
+            revalidateOpportunityPaths();
+        }
 
         return { success: true };
     } catch (error) {

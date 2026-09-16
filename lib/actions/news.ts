@@ -13,6 +13,20 @@ type ActionResponse<T = void> =
   | { success: true; data?: T }
   | { success: false; error: string };
 
+function revalidateNewsPaths(slug?: string, previousSlug?: string) {
+  revalidatePath('/');
+  revalidatePath('/admin/news');
+  revalidatePath('/newsroom');
+  if (slug) {
+    revalidatePath(`/news/${slug}`);
+    revalidatePath(`/newsroom/news/${slug}`);
+  }
+  if (previousSlug && previousSlug !== slug) {
+    revalidatePath(`/news/${previousSlug}`);
+    revalidatePath(`/newsroom/news/${previousSlug}`);
+  }
+}
+
 /**
  * Generate a URL-friendly slug from a title
  */
@@ -240,10 +254,7 @@ export async function createNewsArticle(data: Omit<NewsData, 'id' | 'slug'>): Pr
       updatedAt: new Date()
     });
     
-    // Revalidate pages
-    revalidatePath('/');
-    revalidatePath('/admin/news');
-    revalidatePath(`/news/${uniqueSlug}`);
+    revalidateNewsPaths(uniqueSlug);
     
     return { 
       success: true,
@@ -311,13 +322,7 @@ export async function updateNewsArticle(id: string, data: Omit<NewsData, 'id'>):
       })
       .where(eq(news.id, id));
     
-    // Revalidate pages
-    revalidatePath('/');
-    revalidatePath('/admin/news');
-    revalidatePath(`/news/${slug}`);
-    if (existing[0].slug !== slug) {
-      revalidatePath(`/news/${existing[0].slug}`);
-    }
+    revalidateNewsPaths(slug, existing[0].slug);
     
     return { success: true };
   } catch (error) {
@@ -355,10 +360,7 @@ export async function deleteNewsArticle(id: string): Promise<ActionResponse> {
     await db.delete(news)
       .where(eq(news.id, id));
     
-    // Revalidate pages
-    revalidatePath('/');
-    revalidatePath('/admin/news');
-    revalidatePath(`/news/${existing[0].slug}`);
+    revalidateNewsPaths(existing[0].slug);
     
     return { success: true };
   } catch (error) {
@@ -392,9 +394,7 @@ export async function toggleFeaturedNews(id: string): Promise<ActionResponse> {
       })
       .where(eq(news.id, id));
     
-    // Revalidate pages
-    revalidatePath('/');
-    revalidatePath('/admin/news');
+    revalidateNewsPaths(existing[0].slug);
     
     return { success: true };
   } catch (error) {

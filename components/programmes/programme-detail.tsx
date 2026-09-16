@@ -11,6 +11,7 @@ import {
   programmesGalleryCopy,
   type ProgrammeRenderedSection,
 } from "@/lib/data/programmes"
+import { sanitizeRichHtml } from "@/lib/sanitize-rich-html"
 import { cn } from "@/lib/utils"
 
 function ProgrammeContents({ sections }: { sections: ProgrammeRenderedSection[] }) {
@@ -76,7 +77,7 @@ function HtmlSection({ section }: { section: ProgrammeRenderedSection }) {
       </h2>
       <div
         className="prose prose-sm mt-5 max-w-none text-[#566159] prose-headings:font-['Gotham','Century_Gothic',Arial,sans-serif] prose-headings:text-[#1b241d] prose-a:text-[#005a7c] prose-li:marker:text-[#315e13]"
-        dangerouslySetInnerHTML={{ __html: section.html }}
+        dangerouslySetInnerHTML={{ __html: sanitizeRichHtml(section.html) }}
       />
     </section>
   )

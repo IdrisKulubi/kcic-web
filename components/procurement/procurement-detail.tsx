@@ -18,10 +18,11 @@ import {
   formatProcurementDate,
   formatProcurementDateTime,
 } from "@/lib/procurement/format"
+import { sanitizeRichHtml } from "@/lib/sanitize-rich-html"
 import { cn } from "@/lib/utils"
 
 function HtmlBlock({ html, heading }: { html: string; heading: string }) {
-  const trimmed = html.trim()
+  const trimmed = sanitizeRichHtml(html)
   if (!trimmed) return null
   return (
     <div>

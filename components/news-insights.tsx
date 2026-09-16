@@ -1,4 +1,4 @@
-import { fetchLatestNewsArticles } from "@/lib/data/news"
+import { fetchLatestNewsArticles } from "@/lib/data/latest-news"
 import {
   fetchKcicYouTubeFeed,
   KCIC_YOUTUBE_CHANNEL_URL,

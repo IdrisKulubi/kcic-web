@@ -2,7 +2,7 @@
 
 import db from '@/db/drizzle';
 import { whistleblowerReports } from '@/db/schema';
-import { eq, desc } from "drizzle-orm/sql";
+import { eq, desc, like } from "drizzle-orm/sql";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
 
@@ -47,15 +47,35 @@ async function generateReferenceNumber(): Promise<string> {
     const year = new Date().getFullYear();
     const existing = await db.select({ referenceNumber: whistleblowerReports.referenceNumber })
         .from(whistleblowerReports)
-        .where(eq(whistleblowerReports.referenceNumber, `WB-${year}%`));
+        .where(like(whistleblowerReports.referenceNumber, `WB-${year}%`));
 
     const count = existing.length + 1;
     return `WB-${year}${count.toString().padStart(4, '0')}`;
 }
 
 // PUBLIC: Submit a new whistleblower report
+const WHISTLEBLOWER_CATEGORIES: WhistleblowerCategory[] = [
+    'fraud', 'misconduct', 'safety', 'harassment', 'corruption', 'other',
+];
+
 export async function submitWhistleblowerReport(input: SubmitReportInput): Promise<{ success: boolean; referenceNumber?: string; error?: string }> {
     try {
+        const subject = input.subject?.trim() ?? '';
+        const description = input.description?.trim() ?? '';
+
+        if (!WHISTLEBLOWER_CATEGORIES.includes(input.category)) {
+            return { success: false, error: 'Please select a valid report category.' };
+        }
+        if (!subject) {
+            return { success: false, error: 'Subject is required.' };
+        }
+        if (!description) {
+            return { success: false, error: 'Description is required.' };
+        }
+        if (input.isAnonymous === false && !input.contactEmail?.trim()) {
+            return { success: false, error: 'Contact email is required when not submitting anonymously.' };
+        }
+
         const id = nanoid();
         const referenceNumber = await generateReferenceNumber();
 
@@ -63,8 +83,8 @@ export async function submitWhistleblowerReport(input: SubmitReportInput): Promi
             id,
             referenceNumber,
             category: input.category,
-            subject: input.subject,
-            description: input.description,
+            subject,
+            description,
             incidentDate: input.incidentDate ? new Date(input.incidentDate) : null,
             department: input.department || null,
             involvedParties: input.involvedParties || null,

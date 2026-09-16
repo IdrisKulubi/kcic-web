@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 import logo from "@/public/KCIC logo.png"
+import { WhistleblowerDialog } from "@/components/whistleblower/whistleblower-dialog"
 
 const footerGroups = [
   {
@@ -18,7 +19,6 @@ const footerGroups = [
     title: "Connect",
     links: [
       { label: "Newsroom", href: "/newsroom" },
-      { label: "Events", href: "/newsroom/events" },
       { label: "Careers", href: "/about/careers" },
       { label: "Contact us", href: "/contact" },
     ],
@@ -57,14 +57,14 @@ export function SiteFooter() {
         <div className="grid gap-10 pb-16 lg:grid-cols-[minmax(0,1.15fr)_0.85fr] lg:items-center lg:pb-20">
           <div>
             <h2 className="m-0 max-w-[18ch] font-['Gotham','Century_Gothic',Arial,sans-serif] text-[clamp(1.65rem,3vw,2.35rem)] leading-[1.15] font-medium tracking-[-0.03em] text-[#1b241d]">
-              Let&apos;s build a climate-resilient future.
+              Let&apos;s build a climate resilient future.
             </h2>
             <p className="mt-3 max-w-[36ch] text-[clamp(1.05rem,2vw,1.35rem)] leading-snug text-[#566159]">
               Start a conversation with our team today.
             </p>
             <Link
               href="/contact"
-              className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-[#7FCC2F]  px-5 text-sm font-semibold text-[#f7fbf5] transition-colors duration-200 ease-out hover:bg-[#27332a] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13]"
+              className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full bg-[#7FCC2F] px-5 text-sm font-semibold text-[#1b241d] transition-colors duration-200 ease-out hover:bg-[#e8f4dc] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13]"
             >
               Contact us
               <span className="ml-2" aria-hidden="true">
@@ -111,9 +111,12 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-[#1b241d]/10 pt-6 text-xs text-[#566159] sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-12 flex flex-col gap-4 border-t border-[#1b241d]/10 pt-6 text-xs text-[#566159] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Kenya Climate Innovation Center.</p>
-          <p>All rights reserved.</p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+            <WhistleblowerDialog />
+            <p>All rights reserved.</p>
+          </div>
         </div>
       </div>
     </footer>

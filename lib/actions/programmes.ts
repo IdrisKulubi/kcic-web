@@ -1,11 +1,10 @@
 'use server'
 
-import db from '../../../db/drizzle';
-import { programmes, programmeSponsors } from '../../../db/schema';
+import db from '@/db/drizzle';
+import { programmes, programmeSponsors } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { eq, asc } from 'drizzle-orm/sql';
-import { slugCandidatesForFlagship } from '@/data/flagship-programmes';
 
 // Types for the expanded programme data
 export type ProgrammeData = {
@@ -79,13 +78,14 @@ const programmeInputSchema = z.object({
  */
 export async function listProgrammes(): Promise<ActionResponse<ProgrammeData[]>> {
   try {
-    const programmesList = await db.query.programmes.findMany({
-      orderBy: [asc(programmes.order)]
-    });
+    const programmesList = await db.select().from(programmes).orderBy(asc(programmes.order));
 
     return {
       success: true,
-      data: programmesList as ProgrammeData[]
+      data: programmesList.map((programme) => ({
+        ...programme,
+        order: programme.order,
+      })) as ProgrammeData[]
     };
   } catch (error) {
     console.error('Error fetching programmes:', error);
@@ -101,26 +101,21 @@ export async function listProgrammes(): Promise<ActionResponse<ProgrammeData[]>>
  */
 export async function getProgramme(id: string): Promise<ActionResponse<ProgrammeWithSponsors>> {
   try {
-    const programme = await db.query.programmes.findFirst({
-      where: eq(programmes.id, id)
-    });
+    const programme = await db.select().from(programmes).where(eq(programmes.id, id)).limit(1);
 
-    if (!programme) {
+    if (!programme[0]) {
       return {
         success: false,
         error: 'Programme not found'
       };
     }
 
-    const sponsors = await db.query.programmeSponsors.findMany({
-      where: eq(programmeSponsors.programmeId, id),
-      orderBy: [asc(programmeSponsors.order)]
-    });
+    const sponsors = await db.select().from(programmeSponsors).where(eq(programmeSponsors.programmeId, id)).orderBy(asc(programmeSponsors.order));
 
     return {
       success: true,
       data: {
-        ...(programme as ProgrammeData),
+        ...(programme[0] as ProgrammeData),
         sponsors: sponsors as ProgrammeSponsorData[]
       }
     };
@@ -138,26 +133,21 @@ export async function getProgramme(id: string): Promise<ActionResponse<Programme
  */
 export async function getProgrammeBySlug(slug: string): Promise<ActionResponse<ProgrammeWithSponsors>> {
   try {
-    const programme = await db.query.programmes.findFirst({
-      where: eq(programmes.slug, slug)
-    });
+    const programme = await db.select().from(programmes).where(eq(programmes.slug, slug)).limit(1);
 
-    if (!programme) {
+    if (!programme[0]) {
       return {
         success: false,
         error: 'Programme not found'
       };
     }
 
-    const sponsors = await db.query.programmeSponsors.findMany({
-      where: eq(programmeSponsors.programmeId, programme.id),
-      orderBy: [asc(programmeSponsors.order)]
-    });
+    const sponsors = await db.select().from(programmeSponsors).where(eq(programmeSponsors.programmeId, programme[0].id)).orderBy(asc(programmeSponsors.order));
 
     return {
       success: true,
       data: {
-        ...(programme as ProgrammeData),
+        ...(programme[0] as ProgrammeData),
         sponsors: sponsors as ProgrammeSponsorData[]
       }
     };
@@ -170,22 +160,7 @@ export async function getProgrammeBySlug(slug: string): Promise<ActionResponse<P
   }
 }
 
-/**
- * Resolve a programme by URL slug, then try flagship alias slugs (e.g. `swift` → `swift-programme`)
- * so editorial flagship pages still load when the database uses a shorter slug.
- */
-export async function getProgrammeBySlugWithFlagshipFallback(
-  slug: string
-): Promise<ActionResponse<ProgrammeWithSponsors>> {
-  for (const candidate of slugCandidatesForFlagship(slug)) {
-    const result = await getProgrammeBySlug(candidate);
-    if (result.success) return result;
-  }
-  return {
-    success: false,
-    error: 'Programme not found',
-  };
-}
+
 
 /**
  * Create a new programme
@@ -241,11 +216,9 @@ export async function createProgramme(data: z.infer<typeof programmeInputSchema>
  */
 export async function updateProgramme(id: string, data: Partial<z.infer<typeof programmeInputSchema>>): Promise<ActionResponse> {
   try {
-    const existing = await db.query.programmes.findFirst({
-      where: eq(programmes.id, id)
-    });
+    const existing = await db.select().from(programmes).where(eq(programmes.id, id)).limit(1);
 
-    if (!existing) {
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Programme not found'
@@ -261,7 +234,7 @@ export async function updateProgramme(id: string, data: Partial<z.infer<typeof p
 
     revalidatePath('/');
     revalidatePath('/programmes');
-    revalidatePath(`/programmes/${existing.slug}`);
+    revalidatePath(`/programmes/${existing[0].slug}`);
     revalidatePath('/admin/programmes');
 
     return { success: true };
@@ -287,11 +260,9 @@ export async function updateProgramme(id: string, data: Partial<z.infer<typeof p
  */
 export async function deleteProgramme(id: string): Promise<ActionResponse> {
   try {
-    const existing = await db.query.programmes.findFirst({
-      where: eq(programmes.id, id)
-    });
+    const existing = await db.select().from(programmes).where(eq(programmes.id, id)).limit(1);
 
-    if (!existing) {
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Programme not found'
@@ -371,10 +342,7 @@ export async function removeProgrammeSponsor(sponsorId: string): Promise<ActionR
  */
 export async function getProgrammeSponsors(programmeId: string): Promise<ActionResponse<ProgrammeSponsorData[]>> {
   try {
-    const sponsors = await db.query.programmeSponsors.findMany({
-      where: eq(programmeSponsors.programmeId, programmeId),
-      orderBy: [asc(programmeSponsors.order)]
-    });
+    const sponsors = await db.select().from(programmeSponsors).where(eq(programmeSponsors.programmeId, programmeId)).orderBy(asc(programmeSponsors.order));
 
     return {
       success: true,

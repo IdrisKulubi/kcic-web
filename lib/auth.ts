@@ -1,4 +1,4 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, nanoid } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import db from "@/db/drizzle";
 import * as schema from "@/db/schema";
@@ -33,11 +33,6 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 5 * 60, // 5 minutes
-    },
-  },
-  advanced: {
-    generateId: () => {
-      return crypto.randomUUID();
     },
   },
 });

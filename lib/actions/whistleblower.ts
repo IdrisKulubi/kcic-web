@@ -1,7 +1,7 @@
 'use server';
 
-import db from '../../../db/drizzle';
-import { whistleblowerReports } from '../../../db/schema';
+import db from '@/db/drizzle';
+import { whistleblowerReports } from '@/db/schema';
 import { eq, desc } from "drizzle-orm/sql";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";

@@ -1,7 +1,7 @@
 'use server'
 
-import db from '../../../db/drizzle';
-import { teamMembers } from '../../../db/schema';
+import db from '@/db/drizzle';
+import { teamMembers } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { eq, asc } from 'drizzle-orm/sql';
@@ -19,10 +19,8 @@ type ActionResponse<T = void> =
  */
 export async function listTeamMembers(): Promise<ActionResponse<TeamMemberData[]>> {
   try {
-    const members = await db.query.teamMembers.findMany({
+    const members = await db.select().from(teamMembers).orderBy(asc(teamMembers.order));
       orderBy: [asc(teamMembers.order)]
-    });
-
     const data: TeamMemberData[] = members.map(member => ({
       id: member.id,
       name: member.name,
@@ -54,11 +52,8 @@ export async function listTeamMembers(): Promise<ActionResponse<TeamMemberData[]
  */
 export async function getTeamMember(id: string): Promise<ActionResponse<TeamMemberData>> {
   try {
-    const member = await db.query.teamMembers.findFirst({
-      where: eq(teamMembers.id, id)
-    });
-
-    if (!member) {
+    const member = await db.select().from(teamMembers).where(eq(teamMembers.id, id)).limit(1);
+    if (!member[0]) {
       return {
         success: false,
         error: 'Team member not found'
@@ -66,16 +61,16 @@ export async function getTeamMember(id: string): Promise<ActionResponse<TeamMemb
     }
 
     const data: TeamMemberData = {
-      id: member.id,
-      name: member.name,
-      role: member.role,
-      category: (member as any).category || 'Other',
-      bio: member.bio || '',
-      photo: member.photo,
-      email: member.email || '',
-      linkedin: member.linkedin || '',
-      twitter: member.twitter || '',
-      order: member.order
+      id: member[0].id,
+      name: member[0].name,
+      role: member[0].role,
+      category: (member[0] as any).category || 'Other',
+      bio: member[0].bio || '',
+      photo: member[0].photo,
+      email: member[0].email || '',
+      linkedin: member[0].linkedin || '',
+      twitter: member[0].twitter || '',
+      order: member[0].order
     };
 
     return {
@@ -100,12 +95,10 @@ export async function createTeamMember(data: Omit<TeamMemberData, 'id' | 'order'
     const validated = teamMemberSchema.omit({ id: true, order: true }).parse(data);
     
     // Get the highest order value to append new team member at the end
-    const existingMembers = await db.query.teamMembers.findMany({
+    const existingMembers = await db.select().from(teamMembers).orderBy(asc(teamMembers.order));
       orderBy: [asc(teamMembers.order)]
-    });
-    
     const nextOrder = existingMembers.length > 0 
-      ? Math.max(...existingMembers.map(m => m.order)) + 1 
+      ? Math.max(...existingMembers.map((m) => m.order)) + 1 
       : 0;
     
     // Generate unique ID
@@ -161,11 +154,9 @@ export async function updateTeamMember(id: string, data: Omit<TeamMemberData, 'i
     const validated = teamMemberSchema.omit({ id: true, order: true }).parse(data);
     
     // Check if team member exists
-    const existing = await db.query.teamMembers.findFirst({
-      where: eq(teamMembers.id, id)
-    });
+    const existing = await db.select().from(teamMembers).where(eq(teamMembers.id, id)).limit(1);
     
-    if (!existing) {
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Team member not found'
@@ -215,11 +206,8 @@ export async function updateTeamMember(id: string, data: Omit<TeamMemberData, 'i
 export async function deleteTeamMember(id: string): Promise<ActionResponse> {
   try {
     // Check if team member exists
-    const existing = await db.query.teamMembers.findFirst({
-      where: eq(teamMembers.id, id)
-    });
-    
-    if (!existing) {
+    const existing = await db.select().from(teamMembers).where(eq(teamMembers.id, id)).limit(1);
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Team member not found'
@@ -231,15 +219,10 @@ export async function deleteTeamMember(id: string): Promise<ActionResponse> {
       .where(eq(teamMembers.id, id));
     
     // Reorder remaining team members to fill the gap
-    const remainingMembers = await db.query.teamMembers.findMany({
-      orderBy: [asc(teamMembers.order)]
-    });
-    
+    const remainingMembers = await db.select().from(teamMembers).orderBy(asc(teamMembers.order));
     // Update order for remaining items
     for (let i = 0; i < remainingMembers.length; i++) {
-      await db.update(teamMembers)
-        .set({ order: i })
-        .where(eq(teamMembers.id, remainingMembers[i].id));
+      await db.update(teamMembers).set({ order: i }).where(eq(teamMembers.id, remainingMembers[i].id));
     }
     
     // Revalidate pages

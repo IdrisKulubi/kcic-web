@@ -1,10 +1,10 @@
 'use server';
 
-import { opportunities, opportunityAttachments } from '../../../db/schema';
+import { opportunities, opportunityAttachments } from '@/db/schema';
 import { eq, desc, and, or } from 'drizzle-orm/sql';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
-import db from '../../../db/drizzle';
+import db from '@/db/drizzle';
 
 // Types
 export type OpportunityType = 'job' | 'consulting' | 'rfp' | 'tender';
@@ -103,15 +103,7 @@ export async function listOpportunities(filters?: {
             conditions.push(eq(opportunities.isActive, true));
         }
 
-        const result = await db.query.opportunities.findMany({
-            where: conditions.length > 0 ? and(...conditions) : undefined,
-            with: {
-                attachments: {
-                    orderBy: (attachments, { asc }) => [asc(attachments.order)],
-                },
-            },
-            orderBy: [desc(opportunities.isFeatured), desc(opportunities.createdAt)],
-        });
+        const result = await db.select().from(opportunities).where(conditions.length > 0 ? and(...conditions) : undefined).orderBy(desc(opportunities.isFeatured), desc(opportunities.createdAt));
 
         return {
             success: true,
@@ -128,22 +120,23 @@ export async function getOpportunityBySlug(
     slug: string
 ): Promise<{ success: boolean; data?: OpportunityWithAttachments; error?: string }> {
     try {
-        const result = await db.query.opportunities.findFirst({
-            where: eq(opportunities.slug, slug),
-            with: {
-                attachments: {
-                    orderBy: (attachments, { asc }) => [asc(attachments.order)],
-                },
-            },
-        });
+        const [opportunity] = await db.select().from(opportunities).where(eq(opportunities.slug, slug));
 
-        if (!result) {
+        if (!opportunity) {
             return { success: false, error: 'Opportunity not found' };
         }
 
+        const attachments = await db
+            .select()
+            .from(opportunityAttachments)
+            .where(eq(opportunityAttachments.opportunityId, opportunity.id));
+
         return {
             success: true,
-            data: result as OpportunityWithAttachments
+            data: {
+                ...opportunity,
+                attachments,
+            } as OpportunityWithAttachments,
         };
     } catch (error) {
         console.error('Error fetching opportunity:', error);
@@ -253,18 +246,16 @@ export async function toggleOpportunityStatus(
 ): Promise<{ success: boolean; data?: OpportunityData; error?: string }> {
     try {
         // Get current status
-        const current = await db.query.opportunities.findFirst({
-            where: eq(opportunities.id, id),
-        });
+        const current = await db.select().from(opportunities).where(eq(opportunities.id, id)).limit(1);
 
-        if (!current) {
+        if (!current[0]) {
             return { success: false, error: 'Opportunity not found' };
         }
 
         const [result] = await db
             .update(opportunities)
             .set({
-                isActive: !current.isActive,
+                isActive: !current[0].isActive,
                 updatedAt: new Date()
             })
             .where(eq(opportunities.id, id))

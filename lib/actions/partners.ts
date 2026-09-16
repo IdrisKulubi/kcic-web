@@ -1,7 +1,7 @@
 'use server'
 
-import db from '../../../db/drizzle';
-import { partners } from '../../../db/schema';
+import db from '@/db/drizzle';
+import { partners } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { eq, asc } from 'drizzle-orm/sql';
@@ -19,16 +19,14 @@ type ActionResponse<T = void> =
  */
 export async function listPartners(): Promise<ActionResponse<PartnerData[]>> {
   try {
-    const partnersList = await db.query.partners.findMany({
+    const partnersList = await db.select().from(partners).orderBy(asc(partners.order));
       orderBy: [asc(partners.order)]
-    });
-
-    const data: PartnerData[] = partnersList.map(partner => ({
+    const data: PartnerData[] = partnersList.map((partner) => ({
       id: partner.id,
       name: partner.name,
       logo: partner.logo,
       website: partner.website || '',
-      order: partner.order
+      order: partner.order,
     }));
 
     return {
@@ -49,11 +47,9 @@ export async function listPartners(): Promise<ActionResponse<PartnerData[]>> {
  */
 export async function getPartner(id: string): Promise<ActionResponse<PartnerData>> {
   try {
-    const partner = await db.query.partners.findFirst({
-      where: eq(partners.id, id)
-    });
+    const partner = await db.select().from(partners).where(eq(partners.id, id)).limit(1);
 
-    if (!partner) {
+    if (!partner[0]) {
       return {
         success: false,
         error: 'Partner not found'
@@ -61,11 +57,11 @@ export async function getPartner(id: string): Promise<ActionResponse<PartnerData
     }
 
     const data: PartnerData = {
-      id: partner.id,
-      name: partner.name,
-      logo: partner.logo,
-      website: partner.website || '',
-      order: partner.order
+      id: partner[0].id,
+      name: partner[0].name,
+      logo: partner[0].logo,
+      website: partner[0].website || '',
+      order: partner[0].order
     };
 
     return {
@@ -90,12 +86,10 @@ export async function createPartner(data: Omit<PartnerData, 'id' | 'order'>): Pr
     const validated = partnerSchema.omit({ id: true, order: true }).parse(data);
     
     // Get the highest order value to append new partner at the end
-    const existingPartners = await db.query.partners.findMany({
-      orderBy: [asc(partners.order)]
-    });
+    const existingPartners = await db.select().from(partners).orderBy(asc(partners.order));
     
     const nextOrder = existingPartners.length > 0 
-      ? Math.max(...existingPartners.map(p => p.order)) + 1 
+      ? Math.max(...existingPartners.map((partner) => partner.order)) + 1 
       : 0;
     
     // Generate unique ID
@@ -146,11 +140,9 @@ export async function updatePartner(id: string, data: Omit<PartnerData, 'id' | '
     const validated = partnerSchema.omit({ id: true, order: true }).parse(data);
     
     // Check if partner exists
-    const existing = await db.query.partners.findFirst({
-      where: eq(partners.id, id)
-    });
+    const existing = await db.select().from(partners).where(eq(partners.id, id)).limit(1);
     
-    if (!existing) {
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Partner not found'
@@ -195,11 +187,9 @@ export async function updatePartner(id: string, data: Omit<PartnerData, 'id' | '
 export async function deletePartner(id: string): Promise<ActionResponse> {
   try {
     // Check if partner exists
-    const existing = await db.query.partners.findFirst({
-      where: eq(partners.id, id)
-    });
+    const existing = await db.select().from(partners).where(eq(partners.id, id)).limit(1);
     
-    if (!existing) {
+    if (!existing[0]) {
       return {
         success: false,
         error: 'Partner not found'
@@ -211,15 +201,11 @@ export async function deletePartner(id: string): Promise<ActionResponse> {
       .where(eq(partners.id, id));
     
     // Reorder remaining partners to fill the gap
-    const remainingPartners = await db.query.partners.findMany({
-      orderBy: [asc(partners.order)]
-    });
+    const remainingPartners = await db.select().from(partners).orderBy(asc(partners.order));
     
     // Update order for remaining items
     for (let i = 0; i < remainingPartners.length; i++) {
-      await db.update(partners)
-        .set({ order: i })
-        .where(eq(partners.id, remainingPartners[i].id));
+      await db.update(partners).set({ order: i }).where(eq(partners.id, remainingPartners[i].id));
     }
     
     // Revalidate pages

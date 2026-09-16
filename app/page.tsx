@@ -4,6 +4,7 @@ import { WhatWeBelieve } from "@/components/what-we-believe"
 import { ImpactOverview } from "@/components/impact-overview"
 import { AwardsRecognition } from "@/components/awards-recognition"
 import { NewsInsights } from "@/components/news-insights"
+import { PartnersLogos } from "@/components/partners-logos"
 import { SiteFooter } from "@/components/site-footer"
 
 export default function Page() {
@@ -25,6 +26,7 @@ export default function Page() {
           <ImpactOverview />
           <AwardsRecognition />
           <NewsInsights />
+          <PartnersLogos />
         </main>
         <SiteFooter />
       </div>

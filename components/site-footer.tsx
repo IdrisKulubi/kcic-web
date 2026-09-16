@@ -26,7 +26,7 @@ const footerGroups = [
   {
     title: "Resources",
     links: [
-      { label: "Impact reports", href: "/impact/reports" },
+      { label: "Impact reports", href: "/impact#reports" },
       { label: "Policies & disclosures", href: "/about/policies-disclosures" },
       { label: "Procurement", href: "/about/procurement" },
       { label: "FAQs", href: "/faqs" },

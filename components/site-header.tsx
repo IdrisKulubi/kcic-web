@@ -149,19 +149,19 @@ const groups: { title: string; items: NavItem[] }[] = [
       {
         title: "Our theory of change",
         description: "Our pathway to lasting impact",
-        href: "/impact/theory-of-change",
+        href: "/impact#theory-of-change",
         icon: TreeStructure,
       },
       {
         title: "Our targets",
         description: "The future we are working towards",
-        href: "/impact/targets",
+        href: "/impact#targets",
         icon: Target,
       },
       {
         title: "Impact reports",
         description: "Explore our results and insights",
-        href: "/impact/reports",
+        href: "/impact#reports",
         icon: Files,
       },
      

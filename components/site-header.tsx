@@ -114,13 +114,13 @@ const groups: { title: string; items: NavItem[] }[] = [
       {
         title: "Flagship programmes",
         description: "Discover our core programmes",
-        href: "/programmes",
+        href: "/programmes#flagship",
         icon: RocketLaunch,
       },
       {
         title: "Special projects & initiatives",
         description: "New possibilities for climate action",
-        href: "/programmes/special-projects",
+        href: "/programmes#special",
         icon: Sparkle,
       },
       {
@@ -132,7 +132,7 @@ const groups: { title: string; items: NavItem[] }[] = [
       {
         title: "Past projects",
         description: "Explore the work that came before",
-        href: "/programmes/past-projects",
+        href: "/programmes#past",
         icon: Archive,
       },
     ],

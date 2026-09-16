@@ -1,4 +1,7 @@
-import type { ProgrammeData } from "@/lib/actions/programmes"
+import type {
+  ProgrammeData,
+  ProgrammeWithSponsors,
+} from "@/lib/actions/programmes"
 
 export const programmesMeta = {
   title: "Our programmes",
@@ -37,7 +40,73 @@ export const programmeDetailCopy = {
   applyHeading: "Apply",
   applyExternal: "Apply online",
   sponsorsHeading: "Partners & funders",
-  introductionHeading: "Overview",
+  contentsHeading: "On this page",
+  copyLinkLabel: "Copy link",
+  copyLinkCopied: "Copied",
+  shareLabel: "Share",
+}
+
+export type ProgrammeContentField =
+  | "introduction"
+  | "eligibility"
+  | "criteria"
+  | "applicationProcess"
+  | "applicationSelection"
+  | "technicalSupport"
+  | "scoringSystem"
+  | "definitions"
+  | "terms"
+  | "fraudPolicy"
+
+export interface ProgrammeContentSectionDef {
+  id: string
+  field: ProgrammeContentField
+  title: string
+}
+
+export const programmeContentSectionDefs: ProgrammeContentSectionDef[] = [
+  { id: "overview", field: "introduction", title: "Overview" },
+  { id: "eligibility", field: "eligibility", title: "Eligibility" },
+  { id: "criteria", field: "criteria", title: "Criteria" },
+  { id: "how-to-apply", field: "applicationProcess", title: "How to apply" },
+  {
+    id: "application-selection",
+    field: "applicationSelection",
+    title: "Application and selection",
+  },
+  {
+    id: "technical-support",
+    field: "technicalSupport",
+    title: "Technical support",
+  },
+  { id: "scoring", field: "scoringSystem", title: "Scoring" },
+  { id: "definitions", field: "definitions", title: "Definitions" },
+  { id: "terms", field: "terms", title: "Terms" },
+  { id: "fraud-policy", field: "fraudPolicy", title: "Fraud policy" },
+]
+
+export interface ProgrammeRenderedSection {
+  id: string
+  title: string
+  html: string
+}
+
+export function hasProgrammeHtml(value: string | null | undefined) {
+  if (!value?.trim()) return false
+  const stripped = value.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim()
+  return stripped.length > 0
+}
+
+export function getProgrammeContentSections(
+  programme: ProgrammeWithSponsors
+): ProgrammeRenderedSection[] {
+  return programmeContentSectionDefs
+    .map((def) => {
+      const html = programme[def.field]
+      if (!hasProgrammeHtml(html)) return null
+      return { id: def.id, title: def.title, html: html!.trim() }
+    })
+    .filter((section): section is ProgrammeRenderedSection => section !== null)
 }
 
 export type ProgrammeGalleryTab = "all" | "flagship" | "special" | "past"

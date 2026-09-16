@@ -27,7 +27,13 @@ export async function fetchAllPartners(): Promise<PartnerRecord[]> {
     .orderBy(asc(partners.order))
 }
 
+export function partnersWithLogos(partnersList: PartnerRecord[]) {
+  return partnersList.filter((partner) => partner.logo.trim().length > 0)
+}
+
 const MIN_ROW_ITEMS = 4
+
+
 
 function partnerToLogoItem(partner: PartnerRecord): PartnerLogoItem {
   const href =

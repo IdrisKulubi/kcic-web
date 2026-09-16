@@ -108,6 +108,8 @@ export async function createPartner(data: Omit<PartnerData, 'id' | 'order'>): Pr
     
     // Revalidate pages
     revalidatePath('/');
+    revalidatePath('/our-work');
+    revalidatePath('/our-work/partners');
     revalidatePath('/admin/partners');
     
     return { 
@@ -161,6 +163,8 @@ export async function updatePartner(id: string, data: Omit<PartnerData, 'id' | '
     
     // Revalidate pages
     revalidatePath('/');
+    revalidatePath('/our-work');
+    revalidatePath('/our-work/partners');
     revalidatePath('/admin/partners');
     
     return { success: true };
@@ -210,6 +214,8 @@ export async function deletePartner(id: string): Promise<ActionResponse> {
     
     // Revalidate pages
     revalidatePath('/');
+    revalidatePath('/our-work');
+    revalidatePath('/our-work/partners');
     revalidatePath('/admin/partners');
     
     return { success: true };
@@ -242,6 +248,8 @@ export async function reorderPartners(data: ReorderPartnersData): Promise<Action
     
     // Revalidate pages
     revalidatePath('/');
+    revalidatePath('/our-work');
+    revalidatePath('/our-work/partners');
     revalidatePath('/admin/partners');
     
     return { success: true };

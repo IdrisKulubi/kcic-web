@@ -37,7 +37,7 @@ export const ourWorkIndex = {
 }
 
 export const ourWorkApproach = {
-  eyebrow: "01 — Approach",
+  eyebrow: "01 Approach",
   heading: "Five forms of support, working together.",
   intro:
     "KCIC provides holistic, country-driven support to accelerate the development, deployment, and transfer of climate technologies. Its approach combines five mutually reinforcing forms of support.",
@@ -99,7 +99,7 @@ export const ourWorkApproach = {
 }
 
 export const ourWorkSectors = {
-  eyebrow: "02 — Sectors",
+  eyebrow: "02 Sectors",
   heading: "Where climate enterprise takes root.",
   intro:
     "KCIC supports locally relevant solutions across six sectors — from energy and mobility to water, food systems, and nature.",
@@ -138,7 +138,7 @@ export const ourWorkSectors = {
 }
 
 export const ourWorkCrossCutting = {
-  eyebrow: "03 — Cross-cutting",
+  eyebrow: "03 Cross-cutting",
   heading: "Priorities that run through the work.",
   intro:
     "These themes appear across programmes and services. They are not a separate catalogue of projects — they shape who is supported, how finance is reached, and how the wider system is strengthened.",
@@ -163,7 +163,7 @@ export const ourWorkCrossCutting = {
 }
 
 export const ourWorkPartners = {
-  eyebrow: "04 — Partners",
+  eyebrow: "04 Partners",
   heading: "A strategic partner for climate impact in Africa.",
   intro:
     "KCIC combines a proven track record, strong regional networks, an integrated ecosystem model, and a scalable approach to climate-enterprise development. It works with funders, governments, standards bodies, academic institutions, private-sector organizations, and climate networks to address barriers that no single organization can solve alone.",

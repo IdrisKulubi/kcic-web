@@ -4,6 +4,7 @@ import { opportunities, opportunityAttachments } from '@/db/schema';
 import { eq, desc, and, inArray } from 'drizzle-orm/sql';
 import { PROCUREMENT_TYPES } from '@/lib/procurement/constants';
 import { isProcurementType } from '@/lib/procurement/status';
+import { isJobType } from '@/lib/opportunity/status';
 import { nanoid } from 'nanoid';
 import { revalidatePath } from 'next/cache';
 import db from '@/db/drizzle';
@@ -91,6 +92,7 @@ function revalidateOpportunityPaths(slug?: string) {
     revalidatePath('/admin/opportunities');
     if (slug) {
         revalidatePath(`/about/procurement/${slug}`);
+        revalidatePath(`/about/careers/${slug}`);
     }
 }
 
@@ -127,6 +129,44 @@ export async function getProcurementBySlug(
         return result;
     }
     if (!isProcurementType(result.data.type)) {
+        return { success: false, error: 'Opportunity not found' };
+    }
+    return result;
+}
+
+// List career opportunities (jobs only), including inactive for closed tab
+export async function listCareerOpportunities(): Promise<{
+    success: boolean;
+    data?: OpportunityData[];
+    error?: string;
+}> {
+    try {
+        const result = await db
+            .select()
+            .from(opportunities)
+            .where(eq(opportunities.type, 'job'))
+            .orderBy(
+                desc(opportunities.isFeatured),
+                desc(opportunities.issuedDate),
+                desc(opportunities.createdAt)
+            );
+
+        return { success: true, data: result as OpportunityData[] };
+    } catch (error) {
+        console.error('Error listing career opportunities:', error);
+        return { success: false, error: 'Failed to fetch career opportunities' };
+    }
+}
+
+// Get career opportunity by slug (jobs only)
+export async function getCareerBySlug(
+    slug: string
+): Promise<{ success: boolean; data?: OpportunityWithAttachments; error?: string }> {
+    const result = await getOpportunityBySlug(slug);
+    if (!result.success || !result.data) {
+        return result;
+    }
+    if (!isJobType(result.data.type)) {
         return { success: false, error: 'Opportunity not found' };
     }
     return result;

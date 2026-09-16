@@ -1,18 +1,15 @@
 import type { OpportunityData } from "@/lib/actions/opportunities"
+import {
+  deriveOpportunityStatus,
+  type OpportunityStatus,
+} from "@/lib/opportunity/status"
 
-export type ProcurementStatus = "open" | "closed"
+export type ProcurementStatus = OpportunityStatus
 
 export function deriveProcurementStatus(
   opportunity: Pick<OpportunityData, "isActive" | "deadline">
 ): ProcurementStatus {
-  if (!opportunity.isActive) return "closed"
-  if (opportunity.deadline) {
-    const deadlineMs = opportunity.deadline.getTime()
-    if (!Number.isNaN(deadlineMs) && deadlineMs <= Date.now()) {
-      return "closed"
-    }
-  }
-  return "open"
+  return deriveOpportunityStatus(opportunity)
 }
 
 export function isProcurementType(type: string): boolean {

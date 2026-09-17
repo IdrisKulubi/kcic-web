@@ -191,7 +191,7 @@ const groups: { title: string; items: NavItem[] }[] = [
       {
         title: "Podcast",
         description: "Listen to climate conversations",
-        href: "/newsroom/podcast",
+        href: "https://sustainablyspeaking.africa",
         icon: Microphone,
       },
       // {

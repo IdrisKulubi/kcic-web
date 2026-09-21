@@ -5,6 +5,7 @@ import { news } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { eq, desc, like, or, and, count } from 'drizzle-orm/sql';
+import { ensureLiveCmsData } from '@/lib/cms-live';
 import { newsSchema } from '@/lib/validators';
 
 export type NewsData = z.infer<typeof newsSchema>;
@@ -74,6 +75,7 @@ export async function listNews(options?: {
   offset?: number;
 }): Promise<ActionResponse<{ articles: NewsData[]; total: number }>> {
   try {
+    await ensureLiveCmsData()
     // Build query conditions
     const conditions = [];
     
@@ -106,7 +108,7 @@ export async function listNews(options?: {
       .select()
       .from(news)
       .where(whereClause)
-      .orderBy(desc(news.publishedAt));
+      .orderBy(desc(news.publishedAt), desc(news.createdAt));
 
     const articles =
       options?.limit !== undefined
@@ -184,6 +186,7 @@ export async function getNewsArticle(id: string): Promise<ActionResponse<NewsDat
  */
 export async function getNewsArticleBySlug(slug: string): Promise<ActionResponse<NewsData>> {
   try {
+    await ensureLiveCmsData()
     const article = await db.select().from(news).where(eq(news.slug, slug)).limit(1);
     if (article.length === 0) {
       return {

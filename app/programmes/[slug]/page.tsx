@@ -5,6 +5,8 @@ import { ProgrammeDetail } from "@/components/programmes/programme-detail"
 import { SiteFooter } from "@/components/site-footer"
 import { getProgrammeBySlug } from "@/lib/actions/programmes"
 
+export const dynamic = "force-dynamic"
+
 interface ProgrammePageProps {
   params: Promise<{ slug: string }>
 }

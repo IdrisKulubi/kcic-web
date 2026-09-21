@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { listNews } from "@/lib/actions/news"
 import { newsMeta, toNewsListItem } from "@/lib/data/news"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: `${newsMeta.title} | KCIC`,
   description: newsMeta.description,

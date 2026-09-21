@@ -8,6 +8,8 @@ import { NewsInsights } from "@/components/news-insights"
 import { PartnersLogos } from "@/components/partners-logos"
 import { SiteFooter } from "@/components/site-footer"
 
+export const dynamic = "force-dynamic"
+
 export default function Page() {
   return (
     <div className="relative -mt-20 overflow-hidden bg-[linear-gradient(180deg,#eaf6f4_0%,#eef6ef_42%,#d7e4d8_72%,#8fa89a_100%)] max-[1050px]:-mt-17">

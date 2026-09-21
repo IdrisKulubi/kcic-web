@@ -5,6 +5,7 @@ import { programmes, programmeSponsors } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { eq, asc } from 'drizzle-orm/sql';
+import { ensureLiveCmsData } from '@/lib/cms-live';
 
 // Types for the expanded programme data
 export type ProgrammeData = {
@@ -78,6 +79,7 @@ const programmeInputSchema = z.object({
  */
 export async function listProgrammes(): Promise<ActionResponse<ProgrammeData[]>> {
   try {
+    await ensureLiveCmsData()
     const programmesList = await db.select().from(programmes).orderBy(asc(programmes.order));
 
     return {
@@ -133,6 +135,7 @@ export async function getProgramme(id: string): Promise<ActionResponse<Programme
  */
 export async function getProgrammeBySlug(slug: string): Promise<ActionResponse<ProgrammeWithSponsors>> {
   try {
+    await ensureLiveCmsData()
     const programme = await db.select().from(programmes).where(eq(programmes.slug, slug)).limit(1);
 
     if (!programme[0]) {

@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/site-footer"
 import { getNewsArticleBySlug, listNews } from "@/lib/actions/news"
 import { hasNewsThumbnail, pickRelatedNews, toNewsListItem } from "@/lib/data/news"
 
+export const dynamic = "force-dynamic"
+
 interface NewsArticlePageProps {
   params: Promise<{ slug: string }>
 }

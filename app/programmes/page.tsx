@@ -7,6 +7,8 @@ import { listProgrammes } from "@/lib/actions/programmes"
 import { programmesMeta } from "@/lib/data/programmes"
 import { toProgrammeListItem } from "@/lib/programmes/serialize"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
   title: `${programmesMeta.title} | KCIC`,
   description: programmesMeta.description,

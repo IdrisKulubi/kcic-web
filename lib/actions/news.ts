@@ -20,11 +20,9 @@ function revalidateNewsPaths(slug?: string, previousSlug?: string) {
   revalidatePath('/newsroom');
   if (slug) {
     revalidatePath(`/news/${slug}`);
-    revalidatePath(`/newsroom/news/${slug}`);
   }
   if (previousSlug && previousSlug !== slug) {
     revalidatePath(`/news/${previousSlug}`);
-    revalidatePath(`/newsroom/news/${previousSlug}`);
   }
 }
 

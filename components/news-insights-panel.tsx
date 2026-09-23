@@ -254,7 +254,7 @@ function StoriesColumn({
                   </p>
                   {article.slug ? (
                     <Link
-                      href={`/newsroom/news/${article.slug}`}
+                      href={`/news/${article.slug}`}
                       className="mt-2 block text-base leading-snug font-semibold text-[#1b241d] underline decoration-[#c5cdc5] underline-offset-4 hover:decoration-[#7fcc2f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fcc2f]"
                     >
                       {article.title}

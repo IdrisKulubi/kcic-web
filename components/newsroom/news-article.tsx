@@ -48,7 +48,7 @@ function RelatedStories({ items }: { items: NewsListItem[] }) {
         {items.map((item) => (
           <li key={item.id}>
             <Link
-              href={`/newsroom/news/${item.slug}`}
+              href={`/news/${item.slug}`}
               className="group flex gap-4 py-5 no-underline outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7fcc2f]"
             >
               <div className="relative size-20 shrink-0 overflow-hidden rounded-[1rem] bg-[#e8ece8] ring-1 ring-[#1b241d]/8 sm:size-24">

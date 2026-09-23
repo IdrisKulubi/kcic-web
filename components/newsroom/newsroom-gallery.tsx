@@ -22,7 +22,7 @@ function NewsCard({ item }: { item: NewsListItem }) {
   return (
     <li className="js-news-card flex flex-col gap-2.5">
       <Link
-        href={`/newsroom/news/${item.slug}`}
+        href={`/news/${item.slug}`}
         className="group flex flex-col gap-2.5 text-inherit no-underline outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#7fcc2f]"
       >
         <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] bg-[#e8ece8] ring-1 ring-[#1b241d]/8">

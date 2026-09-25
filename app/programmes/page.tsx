@@ -9,7 +9,7 @@ import { programmesMeta } from "@/lib/data/programmes"
 import { toProgrammeListItem } from "@/lib/programmes/serialize"
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 export const metadata: Metadata = pageMetadata({
   title: programmesMeta.title,

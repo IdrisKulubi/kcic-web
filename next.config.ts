@@ -1,8 +1,28 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
+  images: {
+    formats: ["image/avif", "image/webp"],
+  },
   // Avoid Turbopack bundling Drizzle/Neon (Windows pnpm store package.json access issues).
   serverExternalPackages: ["drizzle-orm", "@neondatabase/serverless", "bcryptjs"],
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ]
+  },
   async redirects() {
     return [
       {

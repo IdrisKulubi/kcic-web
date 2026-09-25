@@ -87,7 +87,7 @@ export function ImpactTheory() {
                   className="absolute right-0 top-1/2 hidden size-2 -translate-y-1/2 translate-x-1/2 rounded-full bg-[#7fcc2f] lg:block"
                 />
               ) : null}
-              <span className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[0.72rem] font-semibold tracking-[0.14em] text-[#7fcc2f] uppercase">
+              <span className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[0.72rem] font-semibold tracking-[0.14em] text-[#315e13] uppercase">
                 Step {index + 1}
               </span>
               <h3 className="mt-2 m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.15rem] font-medium tracking-[-0.02em] text-[#1b241d]">
@@ -100,7 +100,7 @@ export function ImpactTheory() {
                 {station.bullets.map((item) => (
                   <li
                     key={item}
-                    className="text-[0.88rem] leading-5 text-[#566159] before:mr-2 before:text-[#7fcc2f] before:content-['·']"
+                    className="text-[0.88rem] leading-5 text-[#566159] before:mr-2 before:text-[#315e13] before:content-['·']"
                   >
                     {item}
                   </li>

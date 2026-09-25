@@ -12,7 +12,7 @@ export function WorkCrossCutting() {
     >
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-start">
         <div>
-          <p className="m-0 text-[0.7rem] font-medium tracking-[0.18em] text-[#7fcc2f] uppercase">
+          <p className="m-0 text-[0.7rem] font-medium tracking-[0.18em] text-[#315e13] uppercase">
             {ourWorkCrossCutting.eyebrow}
           </p>
           <h2
@@ -42,7 +42,7 @@ export function WorkCrossCutting() {
               key={item.title}
               className="border-t border-white/10 py-8 last:border-b last:pb-0"
             >
-              <p className="m-0 text-[0.68rem] font-medium tracking-[0.16em] text-[#7fcc2f] uppercase">
+              <p className="m-0 text-[0.68rem] font-medium tracking-[0.16em] text-[#315e13] uppercase">
                 {String(index + 1).padStart(2, "0")}
               </p>
               <h3 className="mt-2 m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.35rem] font-medium tracking-[-0.03em] text-[#f7fbf5]">

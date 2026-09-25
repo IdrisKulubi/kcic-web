@@ -25,7 +25,7 @@ export function ImpactChapterNav({
     : "text-[#315e13]"
   const arrowClass = isDark || isBrand
     ? "text-[#315e13] group-hover:text-[#1b241d]"
-    : "text-[#7fcc2f]"
+    : "text-[#315e13]"
 
   return (
     <nav aria-label="Impact chapters" className="lg:pb-2">

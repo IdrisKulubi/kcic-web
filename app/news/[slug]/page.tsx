@@ -13,7 +13,7 @@ import {
   pageMetadata,
 } from "@/lib/seo"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 interface NewsArticlePageProps {
   params: Promise<{ slug: string }>

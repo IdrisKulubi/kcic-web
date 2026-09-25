@@ -29,7 +29,7 @@ export function WorkChapterNav() {
               </span>
               <span
                 aria-hidden
-                className="text-[#7fcc2f] transition-transform duration-200 group-hover:translate-x-0.5"
+                className="text-[#315e13] transition-transform duration-200 group-hover:translate-x-0.5"
               >
                 →
               </span>

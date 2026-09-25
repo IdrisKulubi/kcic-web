@@ -45,7 +45,7 @@ export function WorkApproach() {
               key={pillar.id}
               className="grid gap-4 border-t border-[#1b241d]/10 py-8 last:border-b last:pb-0 sm:grid-cols-[4.5rem_minmax(0,1fr)] sm:gap-8 sm:py-10"
             >
-              <span className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.35rem] tracking-[-0.04em] text-[#7fcc2f]">
+              <span className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.35rem] tracking-[-0.04em] text-[#315e13]">
                 {String(index + 1).padStart(2, "0")}
               </span>
               <div>

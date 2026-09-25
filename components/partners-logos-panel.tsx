@@ -45,7 +45,7 @@ export function PartnersLogosPanel({
           Partner logos could not be loaded right now.{" "}
           <Link
             href="/our-work#partners"
-            className="font-medium text-[#7fcc2f] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fcc2f]"
+            className="font-medium text-[#315e13] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13]"
           >
             View partners
           </Link>
@@ -57,7 +57,7 @@ export function PartnersLogosPanel({
           Partner logos will appear here.{" "}
           <Link
             href="/our-work#partners"
-            className="font-medium text-[#7fcc2f] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fcc2f]"
+            className="font-medium text-[#315e13] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13]"
           >
             Our partners
           </Link>

@@ -8,7 +8,7 @@ import { listNews } from "@/lib/actions/news"
 import { newsMeta, toNewsListItem } from "@/lib/data/news"
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 export const metadata: Metadata = pageMetadata({
   title: newsMeta.title,

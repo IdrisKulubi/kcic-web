@@ -72,7 +72,7 @@ export function ImpactReports() {
                   className="grid gap-4 border-b border-[#1b241d]/10 py-8 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:items-center sm:gap-8"
                 >
                   <span
-                    className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.75rem] font-medium tracking-[-0.04em] text-[#7fcc2f] tabular-nums"
+                    className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.75rem] font-medium tracking-[-0.04em] text-[#315e13] tabular-nums"
                     aria-hidden="true"
                   >
                     {year}

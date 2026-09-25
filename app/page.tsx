@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMetadata({
   absoluteTitle: true,
 })
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 export default function Page() {
   return (

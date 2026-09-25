@@ -109,7 +109,7 @@ export function ImpactOverview() {
           </p>
           <h2
             id={TITLE_ID}
-            className="js-impact-fade m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[clamp(2rem,4vw,3.35rem)] leading-[1.06] font-medium tracking-[-0.04em] text-[#7fcc2f]"
+            className="js-impact-fade m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[clamp(2rem,4vw,3.35rem)] leading-[1.06] font-medium tracking-[-0.04em] text-[#315e13]"
           >
             Thirteen years of climate enterprise impact.
           </h2>

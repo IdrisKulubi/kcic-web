@@ -6,6 +6,8 @@ interface RemoteThumbnailProps {
   src: string
   alt: string
   className?: string
+  width?: number
+  height?: number
   onError?: ImgHTMLAttributes<HTMLImageElement>["onError"]
 }
 
@@ -14,6 +16,8 @@ export function RemoteThumbnail({
   src,
   alt,
   className,
+  width = 4,
+  height = 3,
   onError,
 }: RemoteThumbnailProps) {
   return (
@@ -21,6 +25,8 @@ export function RemoteThumbnail({
     <img
       src={src}
       alt={alt}
+      width={width}
+      height={height}
       className={className}
       loading="lazy"
       decoding="async"

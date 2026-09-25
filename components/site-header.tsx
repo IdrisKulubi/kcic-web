@@ -256,7 +256,7 @@ export function SiteHeader() {
     >
       <a
         href="#main-content"
-        className="absolute top-[-7.5rem] left-4 z-50 rounded-lg bg-white px-5 py-3 focus:top-0"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-5 focus:py-3 focus:font-medium focus:text-[#1b241d] focus:shadow-md focus:outline-2 focus:outline-offset-4 focus:outline-[#315e13]"
       >
         Skip to content
       </a>
@@ -271,14 +271,12 @@ export function SiteHeader() {
         <Link
           href="/"
           className="block w-12 shrink-0 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13] max-[1050px]:w-[38px]"
-          aria-label="KCIC home"
           onClick={close}
         >
           <Image
             src={logo}
             alt="Kenya Climate Innovation Center"
             sizes="48px"
-            preload
             className="block h-auto w-full"
           />
         </Link>
@@ -298,7 +296,11 @@ export function SiteHeader() {
             setOpen(null)
           }}
         >
-          {mobileOpen ? <X size={22} /> : <List size={24} />}
+          {mobileOpen ? (
+            <X size={22} aria-hidden />
+          ) : (
+            <List size={24} aria-hidden />
+          )}
         </button>
         <nav
           id="primary-navigation"

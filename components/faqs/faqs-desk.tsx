@@ -119,7 +119,7 @@ export function FaqsDesk() {
                     >
                       <span
                         aria-hidden
-                        className="shrink-0 pt-0.5 text-[0.72rem] font-medium tracking-[0.14em] text-[#7fcc2f]"
+                        className="shrink-0 pt-0.5 text-[0.72rem] font-medium tracking-[0.14em] text-[#315e13]"
                       >
                         {numberById.get(item.id)}
                       </span>

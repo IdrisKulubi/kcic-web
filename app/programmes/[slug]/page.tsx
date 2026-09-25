@@ -8,7 +8,7 @@ import { getProgrammeBySlug } from "@/lib/actions/programmes"
 import { programmesMeta } from "@/lib/data/programmes"
 import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 60
 
 interface ProgrammePageProps {
   params: Promise<{ slug: string }>

@@ -57,8 +57,12 @@ function isValidEmail(value: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
 }
 
-export function WhistleblowerDialog() {
-  const [open, setOpen] = useState(false)
+export function WhistleblowerDialog({
+  initialOpen = false,
+}: {
+  initialOpen?: boolean
+}) {
+  const [open, setOpen] = useState(initialOpen)
   const [form, setForm] = useState(initialForm)
   const [error, setError] = useState<string | null>(null)
   const [referenceNumber, setReferenceNumber] = useState<string | null>(null)

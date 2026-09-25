@@ -1,23 +1,70 @@
-import Image from "next/image"
+import { getImageProps } from "next/image"
 import Link from "next/link"
 
-import heroImage from "@/public/hero.png"
+import heroDesktop from "@/public/hero-desktop.webp"
+import heroMobile from "@/public/hero-mobile.webp"
+
+const heroAlt =
+  "Climate enterprises working across agriculture, recycling, solar energy, and electric mobility"
 
 export function Hero() {
+  const common = { alt: heroAlt, sizes: "100vw" as const }
+  const {
+    props: { srcSet: desktop },
+  } = getImageProps({
+    ...common,
+    src: heroDesktop,
+    width: heroDesktop.width,
+    height: heroDesktop.height,
+    quality: 70,
+  })
+  const {
+    props: { srcSet: mobile, ...rest },
+  } = getImageProps({
+    ...common,
+    src: heroMobile,
+    width: heroMobile.width,
+    height: heroMobile.height,
+    quality: 68,
+  })
+
   return (
     <section
       className="canvas-panel isolate grid min-h-[calc(100svh-2*var(--canvas-gutter))] grid-cols-1 grid-rows-1"
       aria-labelledby="hero-title"
     >
-      <Image
-        src={heroImage}
-        alt="Climate enterprises working across agriculture, recycling, solar energy, and electric mobility"
-        fill
-        preload
-        placeholder="blur"
-        sizes="100vw"
-        className="-z-20 object-cover object-[18%_center] md:object-center"
+      <link
+        rel="preload"
+        as="image"
+        imageSrcSet={mobile}
+        imageSizes="100vw"
+        media="(max-width: 767px)"
+        fetchPriority="high"
       />
+      <link
+        rel="preload"
+        as="image"
+        imageSrcSet={desktop}
+        imageSizes="100vw"
+        media="(min-width: 768px)"
+        fetchPriority="high"
+      />
+      <picture className="absolute inset-0 -z-20">
+        <source media="(max-width: 767px)" srcSet={mobile} sizes="100vw" />
+        <source media="(min-width: 768px)" srcSet={desktop} sizes="100vw" />
+        <img
+          {...rest}
+          alt={heroAlt}
+          className="size-full object-cover object-center"
+          style={{
+            backgroundImage: `url(${heroDesktop.blurDataURL})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          fetchPriority="high"
+          decoding="async"
+        />
+      </picture>
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,45,28,0.93)_0%,rgba(18,45,28,0.76)_35%,rgba(18,45,28,0.12)_72%)] max-md:bg-[linear-gradient(0deg,rgba(18,45,28,0.92)_0%,rgba(18,45,28,0.58)_52%,rgba(18,45,28,0.10)_100%)]"

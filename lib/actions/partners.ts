@@ -2,7 +2,8 @@
 
 import db from '@/db/drizzle';
 import { partners } from '@/db/schema';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
+import { PARTNERS_CACHE_TAG } from '@/lib/cache-tags';
 import { z } from 'zod';
 import { eq, asc } from 'drizzle-orm/sql';
 import { partnerSchema, reorderPartnersSchema } from '../validators';
@@ -20,7 +21,6 @@ type ActionResponse<T = void> =
 export async function listPartners(): Promise<ActionResponse<PartnerData[]>> {
   try {
     const partnersList = await db.select().from(partners).orderBy(asc(partners.order));
-      orderBy: [asc(partners.order)]
     const data: PartnerData[] = partnersList.map((partner) => ({
       id: partner.id,
       name: partner.name,
@@ -106,7 +106,7 @@ export async function createPartner(data: Omit<PartnerData, 'id' | 'order'>): Pr
       updatedAt: new Date()
     });
     
-    // Revalidate pages
+    updateTag(PARTNERS_CACHE_TAG);
     revalidatePath('/');
     revalidatePath('/our-work');
     revalidatePath('/our-work/partners');
@@ -161,7 +161,7 @@ export async function updatePartner(id: string, data: Omit<PartnerData, 'id' | '
       })
       .where(eq(partners.id, id));
     
-    // Revalidate pages
+    updateTag(PARTNERS_CACHE_TAG);
     revalidatePath('/');
     revalidatePath('/our-work');
     revalidatePath('/our-work/partners');
@@ -212,7 +212,7 @@ export async function deletePartner(id: string): Promise<ActionResponse> {
       await db.update(partners).set({ order: i }).where(eq(partners.id, remainingPartners[i].id));
     }
     
-    // Revalidate pages
+    updateTag(PARTNERS_CACHE_TAG);
     revalidatePath('/');
     revalidatePath('/our-work');
     revalidatePath('/our-work/partners');
@@ -246,7 +246,7 @@ export async function reorderPartners(data: ReorderPartnersData): Promise<Action
         .where(eq(partners.id, item.id));
     }
     
-    // Revalidate pages
+    updateTag(PARTNERS_CACHE_TAG);
     revalidatePath('/');
     revalidatePath('/our-work');
     revalidatePath('/our-work/partners');

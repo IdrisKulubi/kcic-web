@@ -7,7 +7,7 @@ import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 import climateImage from "@/public/climate/image.png"
-import heroImage from "@/public/hero.png"
+import heroImage from "@/public/hero-desktop.webp"
 import { aboutStory } from "@/lib/data/about"
 
 export function AboutStory() {

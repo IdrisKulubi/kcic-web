@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 import logo from "@/public/KCIC logo.png"
-import { WhistleblowerDialog } from "@/components/whistleblower/whistleblower-dialog"
+import { WhistleblowerLauncher } from "@/components/whistleblower/whistleblower-launcher"
 
 const footerGroups = [
   {
@@ -114,7 +114,7 @@ export function SiteFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-[#1b241d]/10 pt-6 text-xs text-[#566159] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Kenya Climate Innovation Center.</p>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-            <WhistleblowerDialog />
+            <WhistleblowerLauncher />
             <p>All rights reserved.</p>
           </div>
         </div>

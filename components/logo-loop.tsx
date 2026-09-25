@@ -105,7 +105,8 @@ function useAnimationLoop(
   seqHeight: number,
   isHovered: boolean,
   hoverSpeed: number | undefined,
-  isVertical: boolean
+  isVertical: boolean,
+  paused: boolean
 ) {
   const rafRef = useRef<number | null>(null)
   const lastTimestampRef = useRef<number | null>(null)
@@ -117,6 +118,8 @@ function useAnimationLoop(
     if (!track) return
 
     const seqSize = isVertical ? seqHeight : seqWidth
+
+    if (paused) return
 
     if (seqSize > 0) {
       offsetRef.current = ((offsetRef.current % seqSize) + seqSize) % seqSize
@@ -170,6 +173,7 @@ function useAnimationLoop(
     isHovered,
     hoverSpeed,
     isVertical,
+    paused,
     trackRef,
   ])
 }
@@ -217,6 +221,7 @@ export const LogoLoop = memo(function LogoLoop({
   const [seqHeight, setSeqHeight] = useState(0)
   const [copyCount, setCopyCount] = useState(ANIMATION_CONFIG.MIN_COPIES)
   const [isHovered, setIsHovered] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
 
   const effectiveHoverSpeed = useMemo(() => {
     if (hoverSpeed !== undefined) return hoverSpeed
@@ -279,6 +284,29 @@ export const LogoLoop = memo(function LogoLoop({
 
   useImageLoader(seqRef, updateDimensions, [logos, gap, logoHeight, isVertical])
 
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    let inView = true
+    const syncPaused = () => {
+      setIsPaused(!inView || document.visibilityState === "hidden")
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = Boolean(entry?.isIntersecting)
+      syncPaused()
+    })
+
+    observer.observe(container)
+    document.addEventListener("visibilitychange", syncPaused)
+
+    return () => {
+      observer.disconnect()
+      document.removeEventListener("visibilitychange", syncPaused)
+    }
+  }, [])
+
   useAnimationLoop(
     trackRef,
     targetVelocity,
@@ -286,7 +314,8 @@ export const LogoLoop = memo(function LogoLoop({
     seqHeight,
     isHovered,
     effectiveHoverSpeed,
-    isVertical
+    isVertical,
+    isPaused
   )
 
   const cssVariables = useMemo(

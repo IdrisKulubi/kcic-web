@@ -1,14 +1,14 @@
-import db from "@/db/drizzle"
-import { news } from "@/db/schema"
+import { unstable_cache } from "next/cache"
 import { desc } from "drizzle-orm/sql"
 
-import { ensureLiveCmsData } from "@/lib/cms-live"
+import db from "@/db/drizzle"
+import { news } from "@/db/schema"
+import { NEWS_CACHE_TAG } from "@/lib/cache-tags"
 import type { LatestNewsArticle } from "@/lib/data/news"
 
-export async function fetchLatestNewsArticles(
-  limit = 3
+async function queryLatestNewsArticles(
+  limit: number
 ): Promise<LatestNewsArticle[]> {
-  await ensureLiveCmsData()
   return db
     .select({
       id: news.id,
@@ -22,4 +22,12 @@ export async function fetchLatestNewsArticles(
     .from(news)
     .orderBy(desc(news.publishedAt), desc(news.createdAt))
     .limit(limit)
+}
+
+export function fetchLatestNewsArticles(limit = 3) {
+  return unstable_cache(
+    () => queryLatestNewsArticles(limit),
+    ["latest-news", String(limit)],
+    { revalidate: 60, tags: [NEWS_CACHE_TAG] }
+  )()
 }

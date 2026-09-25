@@ -1,7 +1,9 @@
-import db from "@/db/drizzle"
-import { partners } from "@/db/schema"
+import { unstable_cache } from "next/cache"
 import { asc } from "drizzle-orm/sql"
 
+import db from "@/db/drizzle"
+import { partners } from "@/db/schema"
+import { PARTNERS_CACHE_TAG } from "@/lib/cache-tags"
 import type { PartnerLogoItem } from "@/lib/types/partner-logo"
 
 export type { PartnerLogoItem as LogoImageItem }
@@ -99,10 +101,23 @@ export function splitPartnersIntoLogoRows(partnersList: PartnerRecord[]): {
   }
 }
 
-export async function fetchPartnerLogoRows(): Promise<{
-  rowOne: PartnerLogoItem[]
-  rowTwo: PartnerLogoItem[]
-}> {
-  const all = await fetchAllPartners()
-  return splitPartnersIntoLogoRows(all)
+async function queryPartnerLogos(): Promise<PartnerRecord[]> {
+  return db
+    .select({
+      id: partners.id,
+      name: partners.name,
+      logo: partners.logo,
+      website: partners.website,
+      order: partners.order,
+    })
+    .from(partners)
+    .orderBy(asc(partners.order))
+}
+
+export function fetchPartnerLogoRows() {
+  return unstable_cache(
+    async () => splitPartnersIntoLogoRows(await queryPartnerLogos()),
+    ["partner-logos"],
+    { revalidate: 300, tags: [PARTNERS_CACHE_TAG] }
+  )()
 }

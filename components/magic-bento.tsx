@@ -110,6 +110,7 @@ function ParticleCard({
   const memoizedParticles = useRef<HTMLDivElement[]>([])
   const particlesInitialized = useRef(false)
   const magnetismAnimationRef = useRef<gsap.core.Tween | null>(null)
+  const pointerFrameRef = useRef<number | null>(null)
 
   const initializeParticles = useCallback(() => {
     if (particlesInitialized.current || !cardRef.current) return
@@ -231,39 +232,48 @@ function ParticleCard({
       }
     }
 
-    const handleMouseMove = (e: MouseEvent) => {
+    let latestPointer: MouseEvent | null = null
+    const handleMouseMove = (event: MouseEvent) => {
       if (!enableTilt && !enableMagnetism) return
+      latestPointer = event
+      if (pointerFrameRef.current !== null) return
 
-      const rect = element.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      const centerX = rect.width / 2
-      const centerY = rect.height / 2
+      pointerFrameRef.current = requestAnimationFrame(() => {
+        pointerFrameRef.current = null
+        const pointer = latestPointer
+        if (!pointer) return
 
-      if (enableTilt) {
-        const rotateX = ((y - centerY) / centerY) * -10
-        const rotateY = ((x - centerX) / centerX) * 10
+        const rect = element.getBoundingClientRect()
+        const x = pointer.clientX - rect.left
+        const y = pointer.clientY - rect.top
+        const centerX = rect.width / 2
+        const centerY = rect.height / 2
 
-        gsap.to(element, {
-          rotateX,
-          rotateY,
-          duration: 0.1,
-          ease: "power2.out",
-          transformPerspective: 1000,
-        })
-      }
+        if (enableTilt) {
+          const rotateX = ((y - centerY) / centerY) * -10
+          const rotateY = ((x - centerX) / centerX) * 10
 
-      if (enableMagnetism) {
-        const magnetX = (x - centerX) * 0.05
-        const magnetY = (y - centerY) * 0.05
+          gsap.to(element, {
+            rotateX,
+            rotateY,
+            duration: 0.1,
+            ease: "power2.out",
+            transformPerspective: 1000,
+          })
+        }
 
-        magnetismAnimationRef.current = gsap.to(element, {
-          x: magnetX,
-          y: magnetY,
-          duration: 0.3,
-          ease: "power2.out",
-        })
-      }
+        if (enableMagnetism) {
+          const magnetX = (x - centerX) * 0.05
+          const magnetY = (y - centerY) * 0.05
+
+          magnetismAnimationRef.current = gsap.to(element, {
+            x: magnetX,
+            y: magnetY,
+            duration: 0.3,
+            ease: "power2.out",
+          })
+        }
+      })
     }
 
     const handleClick = (e: MouseEvent) => {
@@ -315,6 +325,10 @@ function ParticleCard({
 
     return () => {
       isHoveredRef.current = false
+      if (pointerFrameRef.current !== null) {
+        cancelAnimationFrame(pointerFrameRef.current)
+        pointerFrameRef.current = null
+      }
       element.removeEventListener("mouseenter", handleMouseEnter)
       element.removeEventListener("mouseleave", handleMouseLeave)
       element.removeEventListener("mousemove", handleMouseMove)
@@ -388,8 +402,16 @@ function GlobalSpotlight({
     document.body.appendChild(spotlight)
     spotlightRef.current = spotlight
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!spotlightRef.current || !gridRef.current) return
+    let latestPointer: MouseEvent | null = null
+    let pointerFrame: number | null = null
+    const handleMouseMove = (event: MouseEvent) => {
+      latestPointer = event
+      if (pointerFrame !== null) return
+
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = null
+        const e = latestPointer
+        if (!e || !spotlightRef.current || !gridRef.current) return
 
       const section = sectionRef.current ?? gridRef.current.closest(".what-we-believe")
       const rect = section?.getBoundingClientRect()
@@ -464,6 +486,7 @@ function GlobalSpotlight({
         duration: targetOpacity > 0 ? 0.2 : 0.5,
         ease: "power2.out",
       })
+      })
     }
 
     const handleMouseLeave = () => {
@@ -483,6 +506,7 @@ function GlobalSpotlight({
     document.addEventListener("mouseleave", handleMouseLeave)
 
     return () => {
+      if (pointerFrame !== null) cancelAnimationFrame(pointerFrame)
       document.removeEventListener("mousemove", handleMouseMove)
       document.removeEventListener("mouseleave", handleMouseLeave)
       spotlightRef.current?.parentNode?.removeChild(spotlightRef.current)
@@ -503,6 +527,20 @@ function useMobileDetection() {
   }, [])
 
   return isMobile
+}
+
+function useCoarsePointer() {
+  const [coarse, setCoarse] = useState(false)
+
+  useEffect(() => {
+    const media = window.matchMedia("(pointer: coarse)")
+    const update = () => setCoarse(media.matches)
+    update()
+    media.addEventListener("change", update)
+    return () => media.removeEventListener("change", update)
+  }, [])
+
+  return coarse
 }
 
 function useReducedMotion() {
@@ -561,9 +599,10 @@ export function MagicBento({
 }: MagicBentoInnerProps) {
   const gridRef = useRef<HTMLOListElement>(null)
   const isMobile = useMobileDetection()
+  const coarsePointer = useCoarsePointer()
   const reducedMotion = useReducedMotion()
   const shouldDisableAnimations =
-    disableAnimations || isMobile || reducedMotion
+    disableAnimations || isMobile || coarsePointer || reducedMotion
 
   const cardClassName = (featured?: boolean) =>
     [
@@ -663,7 +702,15 @@ function StaticInteractiveCard({
     const el = elRef.current
     if (!el || disableAnimations) return
 
-    const handleMouseMove = (e: MouseEvent) => {
+    let latestPointer: MouseEvent | null = null
+    let pointerFrame: number | null = null
+    const handleMouseMove = (event: MouseEvent) => {
+      latestPointer = event
+      if (pointerFrame !== null) return
+      pointerFrame = requestAnimationFrame(() => {
+        pointerFrame = null
+        const e = latestPointer
+        if (!e) return
       const rect = el.getBoundingClientRect()
       const x = e.clientX - rect.left
       const y = e.clientY - rect.top
@@ -692,6 +739,7 @@ function StaticInteractiveCard({
           ease: "power2.out",
         })
       }
+      })
     }
 
     const handleMouseLeave = () => {
@@ -749,6 +797,7 @@ function StaticInteractiveCard({
     el.addEventListener("mouseleave", handleMouseLeave)
     el.addEventListener("click", handleClick)
     return () => {
+      if (pointerFrame !== null) cancelAnimationFrame(pointerFrame)
       el.removeEventListener("mousemove", handleMouseMove)
       el.removeEventListener("mouseleave", handleMouseLeave)
       el.removeEventListener("click", handleClick)

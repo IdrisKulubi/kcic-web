@@ -1,13 +1,9 @@
 import type { Metadata } from "next"
+import dynamic from "next/dynamic"
+import { Suspense } from "react"
 
 import { Hero } from "@/components/hero"
-import { ClimateChallenge } from "@/components/climate-challenge"
 import { FoundersCollectiveTeaser } from "@/components/founders-collective-teaser"
-import { WhatWeBelieve } from "@/components/what-we-believe"
-import { ImpactOverview } from "@/components/impact-overview"
-import { AwardsRecognition } from "@/components/awards-recognition"
-import { NewsInsights } from "@/components/news-insights"
-import { PartnersLogos } from "@/components/partners-logos"
 import { SiteFooter } from "@/components/site-footer"
 import { defaultDescription, pageMetadata, siteName } from "@/lib/seo"
 
@@ -19,6 +15,34 @@ export const metadata: Metadata = pageMetadata({
 })
 
 export const revalidate = 60
+
+const ClimateChallenge = dynamic(() =>
+  import("@/components/climate-challenge").then((mod) => mod.ClimateChallenge)
+)
+
+const WhatWeBelieve = dynamic(() =>
+  import("@/components/what-we-believe").then((mod) => mod.WhatWeBelieve)
+)
+
+const ImpactOverview = dynamic(() =>
+  import("@/components/impact-overview").then((mod) => mod.ImpactOverview)
+)
+
+const AwardsRecognition = dynamic(() =>
+  import("@/components/awards-recognition").then((mod) => mod.AwardsRecognition)
+)
+
+const NewsInsights = dynamic(() =>
+  import("@/components/news-insights").then((mod) => mod.NewsInsights)
+)
+
+const PartnersLogos = dynamic(() =>
+  import("@/components/partners-logos").then((mod) => mod.PartnersLogos)
+)
+
+function PanelFallback({ className }: { className: string }) {
+  return <div className={`canvas-panel ${className}`} aria-hidden="true" />
+}
 
 export default function Page() {
   return (
@@ -34,13 +58,25 @@ export default function Page() {
           className="flex flex-col gap-(--canvas-gutter) outline-none"
         >
           <Hero />
-          <ClimateChallenge />
+          <Suspense fallback={<PanelFallback className="min-h-[82svh]" />}>
+            <ClimateChallenge />
+          </Suspense>
           <FoundersCollectiveTeaser />
-          <WhatWeBelieve />
-          <ImpactOverview />
-          <AwardsRecognition />
-          <NewsInsights />
-          <PartnersLogos />
+          <Suspense fallback={<PanelFallback className="min-h-[28rem]" />}>
+            <WhatWeBelieve />
+          </Suspense>
+          <Suspense fallback={<PanelFallback className="min-h-[32rem]" />}>
+            <ImpactOverview />
+          </Suspense>
+          <Suspense fallback={<PanelFallback className="min-h-[24rem] bg-[#7fcc2f]" />}>
+            <AwardsRecognition />
+          </Suspense>
+          <Suspense fallback={<PanelFallback className="min-h-[28rem]" />}>
+            <NewsInsights />
+          </Suspense>
+          <Suspense fallback={<PanelFallback className="min-h-40" />}>
+            <PartnersLogos />
+          </Suspense>
         </main>
         <SiteFooter />
       </div>

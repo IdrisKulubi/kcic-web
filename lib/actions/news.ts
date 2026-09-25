@@ -2,7 +2,8 @@
 
 import db from '@/db/drizzle';
 import { news } from '@/db/schema';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
+import { NEWS_CACHE_TAG } from '@/lib/cache-tags';
 import { z } from 'zod';
 import { eq, desc, like, or, and, count } from 'drizzle-orm/sql';
 import { ensureLiveCmsData } from '@/lib/cms-live';
@@ -15,6 +16,7 @@ type ActionResponse<T = void> =
   | { success: false; error: string };
 
 function revalidateNewsPaths(slug?: string, previousSlug?: string) {
+  updateTag(NEWS_CACHE_TAG);
   revalidatePath('/');
   revalidatePath('/admin/news');
   revalidatePath('/newsroom');

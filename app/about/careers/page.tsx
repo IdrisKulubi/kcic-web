@@ -7,11 +7,13 @@ import { SiteFooter } from "@/components/site-footer"
 import { listCareerOpportunities } from "@/lib/actions/opportunities"
 import { toCareerListItem } from "@/lib/careers/serialize"
 import { careersMeta } from "@/lib/data/careers"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `${careersMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: careersMeta.title,
   description: careersMeta.description,
-}
+  path: "/about/careers",
+})
 
 export default async function CareersPage() {
   const result = await listCareerOpportunities()

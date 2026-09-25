@@ -6,11 +6,13 @@ import { PoliciesIntro } from "@/components/policy/policies-intro"
 import { PoliciesLibrary } from "@/components/policy/policies-library"
 import { SiteFooter } from "@/components/site-footer"
 import { policiesMeta } from "@/lib/data/policies"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `${policiesMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: policiesMeta.title,
   description: policiesMeta.description,
-}
+  path: "/about/policies-disclosures",
+})
 
 export default function PoliciesDisclosuresPage() {
   return (

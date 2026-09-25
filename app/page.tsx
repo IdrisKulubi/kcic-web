@@ -1,3 +1,5 @@
+import type { Metadata } from "next"
+
 import { Hero } from "@/components/hero"
 import { ClimateChallenge } from "@/components/climate-challenge"
 import { FoundersCollectiveTeaser } from "@/components/founders-collective-teaser"
@@ -7,6 +9,14 @@ import { AwardsRecognition } from "@/components/awards-recognition"
 import { NewsInsights } from "@/components/news-insights"
 import { PartnersLogos } from "@/components/partners-logos"
 import { SiteFooter } from "@/components/site-footer"
+import { defaultDescription, pageMetadata, siteName } from "@/lib/seo"
+
+export const metadata: Metadata = pageMetadata({
+  title: siteName,
+  description: defaultDescription,
+  path: "/",
+  absoluteTitle: true,
+})
 
 export const dynamic = "force-dynamic"
 

@@ -54,7 +54,7 @@ function RelatedStories({ items }: { items: NewsListItem[] }) {
               <div className="relative size-20 shrink-0 overflow-hidden rounded-[1rem] bg-[#e8ece8] ring-1 ring-[#1b241d]/8 sm:size-24">
                 <RemoteThumbnail
                   src={item.thumbnail}
-                  alt=""
+                  alt={item.title}
                   className={`${newsCardThumbnailImageClass} transition-transform duration-500 motion-safe:group-hover:scale-[1.03]`}
                 />
               </div>
@@ -169,7 +169,7 @@ export function NewsArticle({ article, related }: NewsArticleProps) {
                 <div className={newsThumbnailFrameClass}>
                   <RemoteThumbnail
                     src={article.thumbnail}
-                    alt=""
+                    alt={article.title}
                     className={newsThumbnailImageClass}
                   />
                 </div>

@@ -83,14 +83,13 @@ export function AboutStory() {
 
         <div
           className="relative mx-auto grid h-[min(28rem,70vw)] w-full max-w-md grid-cols-12 grid-rows-6"
-          aria-hidden="true"
         >
           <div
             className="js-about-photo relative col-span-5 col-start-1 row-span-4 row-start-2 overflow-hidden rounded-[2rem] shadow-[0_20px_50px_-24px_rgb(27_36_29_/_0.45)]"
           >
             <Image
               src={climateImage}
-              alt=""
+              alt="Climate enterprise work in the field supported by KCIC"
               fill
               placeholder="blur"
               sizes="(max-width: 1024px) 40vw, 220px"
@@ -102,7 +101,7 @@ export function AboutStory() {
           >
             <Image
               src={heroImage}
-              alt=""
+              alt="Climate entrepreneurs working across agriculture, energy, and mobility"
               fill
               placeholder="blur"
               sizes="(max-width: 1024px) 50vw, 260px"
@@ -114,7 +113,7 @@ export function AboutStory() {
           >
             <Image
               src={heroImage}
-              alt=""
+              alt="Community and enterprise partners collaborating with KCIC"
               fill
               placeholder="blur"
               sizes="(max-width: 1024px) 38vw, 200px"

@@ -5,11 +5,13 @@ import { ContactMap } from "@/components/contact/contact-map"
 import { ContactSplit } from "@/components/contact/contact-split"
 import { SiteFooter } from "@/components/site-footer"
 import { contactMeta } from "@/lib/data/contact"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `${contactMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: contactMeta.title,
   description: contactMeta.description,
-}
+  path: "/contact",
+})
 
 export default function ContactPage() {
   return (

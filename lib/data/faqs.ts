@@ -1,3 +1,5 @@
+import { siteName, siteUrl } from "@/lib/seo"
+
 export const faqsMeta = {
   title: "Frequently asked questions",
   description:
@@ -201,6 +203,11 @@ export function buildFaqPageJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    publisher: {
+      "@type": "Organization",
+      name: siteName,
+      url: siteUrl.toString(),
+    },
     mainEntity: faqItems.map((item) => ({
       "@type": "Question",
       name: item.question,

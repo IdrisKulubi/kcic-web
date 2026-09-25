@@ -16,11 +16,13 @@ import {
   foundersCollectiveWhat,
   foundersCollectiveWhy,
 } from "@/lib/data/founders-collective"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `${foundersCollectiveMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: foundersCollectiveMeta.title,
   description: foundersCollectiveMeta.description,
-}
+  path: "/founders-collective",
+})
 
 function ApplyLink({
   className,

@@ -1,18 +1,21 @@
 import type { Metadata } from "next"
 
 import { ProgrammesGallery } from "@/components/programmes/programmes-gallery"
+import { JsonLd } from "@/components/seo/json-ld"
 import { ProgrammesIntro } from "@/components/programmes/programmes-intro"
 import { SiteFooter } from "@/components/site-footer"
 import { listProgrammes } from "@/lib/actions/programmes"
 import { programmesMeta } from "@/lib/data/programmes"
 import { toProgrammeListItem } from "@/lib/programmes/serialize"
+import { buildBreadcrumbJsonLd, pageMetadata } from "@/lib/seo"
 
 export const dynamic = "force-dynamic"
 
-export const metadata: Metadata = {
-  title: `${programmesMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: programmesMeta.title,
   description: programmesMeta.description,
-}
+  path: "/programmes",
+})
 
 export default async function ProgrammesPage() {
   const result = await listProgrammes()
@@ -21,6 +24,12 @@ export default async function ProgrammesPage() {
 
   return (
     <div className="relative -mt-20 overflow-hidden bg-[linear-gradient(180deg,#eaf6f4_0%,#eef6ef_42%,#d7e4d8_72%,#8fa89a_100%)] max-[1050px]:-mt-17">
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: programmesMeta.title, path: "/programmes" },
+        ])}
+      />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_28%,rgba(0,173,239,0.10),transparent_25%),radial-gradient(circle_at_88%_60%,rgba(127,204,47,0.12),transparent_28%)]"

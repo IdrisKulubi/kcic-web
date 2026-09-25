@@ -8,11 +8,13 @@ import { SiteFooter } from "@/components/site-footer"
 import { listProcurementOpportunities } from "@/lib/actions/opportunities"
 import { procurementMeta } from "@/lib/data/procurement"
 import { toProcurementListItem } from "@/lib/procurement/serialize"
+import { pageMetadata } from "@/lib/seo"
 
-export const metadata: Metadata = {
-  title: `${procurementMeta.title} | KCIC`,
+export const metadata: Metadata = pageMetadata({
+  title: procurementMeta.title,
   description: procurementMeta.description,
-}
+  path: "/about/procurement",
+})
 
 export default async function ProcurementPage() {
   const result = await listProcurementOpportunities()

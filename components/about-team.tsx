@@ -78,7 +78,7 @@ function TeamPortrait({
   return (
     <RemoteThumbnail
       src={photo}
-      alt=""
+      alt={`Portrait of ${name}`}
       className={cn("size-full rounded-full object-cover", className)}
       onError={() => setFailed(true)}
     />

@@ -28,7 +28,7 @@ function NewsCard({ item }: { item: NewsListItem }) {
         <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem] bg-[#e8ece8] ring-1 ring-[#1b241d]/8">
           <RemoteThumbnail
             src={item.thumbnail}
-            alt=""
+            alt={item.title}
             className={`${newsCardThumbnailImageClass} transition-transform duration-[600ms] ease-[cubic-bezier(0.22,0.03,0.26,1)] motion-safe:group-hover:scale-[1.04]`}
           />
           <div

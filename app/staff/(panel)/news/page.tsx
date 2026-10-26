@@ -45,6 +45,7 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
       category: category || undefined,
       limit: PAGE_SIZE,
       offset: (page - 1) * PAGE_SIZE,
+      live: false,
     }),
     listNewsCategories(),
   ])

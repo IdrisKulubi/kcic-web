@@ -75,9 +75,13 @@ export async function listNews(options?: {
   featured?: boolean;
   limit?: number;
   offset?: number;
+  /** When false, skip the live CMS gate (staff panel lists). Default true for public pages. */
+  live?: boolean;
 }): Promise<ActionResponse<{ articles: NewsData[]; total: number }>> {
   try {
-    await ensureLiveCmsData()
+    if (options?.live !== false) {
+      await ensureLiveCmsData()
+    }
     // Build query conditions
     const conditions = [];
     

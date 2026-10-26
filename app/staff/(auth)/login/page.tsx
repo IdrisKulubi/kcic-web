@@ -3,7 +3,6 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { signIn } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,7 +11,6 @@ import logo from "@/public/KCIC logo.png"
 import { WarningCircle } from "@phosphor-icons/react"
 
 export default function StaffLoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -29,15 +27,15 @@ export default function StaffLoginPage() {
       callbackURL: "/staff/news",
     })
 
-    setPending(false)
-
     if (result.error) {
+      setPending(false)
       setError("That email and password don't match a staff account.")
       return
     }
 
-    router.push("/staff/news")
-    router.refresh()
+    // Full navigation so the new session cookie is sent on the next request.
+    // Client router.push + refresh can race the cookie and trigger a second load.
+    window.location.assign("/staff/news")
   }
 
   return (

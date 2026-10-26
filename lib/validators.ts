@@ -84,6 +84,20 @@ export const createStaffUserSchema = z.object({
   password: z.string().min(10, "Password must be at least 10 characters"),
 })
 
+export const updateStaffUserSchema = z.object({
+  id: z.string().min(1, "User id is required"),
+  name: z.string().min(2, "Name is required").max(100),
+  email: z.string().email("Invalid email"),
+  password: z
+    .string()
+    .max(128)
+    .optional()
+    .refine(
+      (value) => !value || value.length === 0 || value.length >= 10,
+      "Password must be at least 10 characters when provided"
+    ),
+})
+
 export const teamMemberSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2, 'Name must be at least 2 characters').max(100, 'Name must be at most 100 characters'),

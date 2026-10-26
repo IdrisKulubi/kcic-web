@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { createStaffUserAction } from "@/lib/actions/staff-users"
 import { Button } from "@/components/ui/button"
@@ -17,6 +18,7 @@ import {
 import { Plus } from "@phosphor-icons/react"
 
 export function AddStaffDialog() {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
@@ -41,7 +43,7 @@ export function AddStaffDialog() {
 
       form.reset()
       setOpen(false)
-      window.location.reload()
+      router.refresh()
     })
   }
 

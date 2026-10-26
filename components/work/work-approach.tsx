@@ -52,16 +52,18 @@ export function WorkApproach() {
                 <h3 className="m-0 font-['Gotham','Century_Gothic',Arial,sans-serif] text-[1.35rem] font-medium tracking-[-0.03em] text-[#1b241d]">
                   {pillar.title}
                 </h3>
-                <ul className="mt-4 m-0 flex list-none flex-col gap-2 p-0">
-                  {pillar.items.map((item) => (
-                    <li
-                      key={item}
-                      className="border-l-2 border-[#7fcc2f]/70 pl-4 text-[0.95rem] leading-6 text-[#566159]"
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                {pillar.items.length > 0 ? (
+                  <ul className="mt-4 m-0 flex list-none flex-col gap-2 p-0">
+                    {pillar.items.map((item) => (
+                      <li
+                        key={item}
+                        className="border-l-2 border-[#7fcc2f]/70 pl-4 text-[0.95rem] leading-6 text-[#566159]"
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
             </li>
           ))}

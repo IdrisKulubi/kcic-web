@@ -96,8 +96,6 @@ export const impactTheory = {
   heading: "From support to systems change.",
   intro:
     "KCIC's 2025–2030 strategy shifts from supporting individual ventures toward building integrated climate entrepreneurship ecosystems. The presentation references an Integrated Climate Entrepreneurship Ecosystem (ICEE) mode an approved diagram and full definitions will replace this web summary when KCIC publishes them.",
-  diagramNote:
-    "This page describes the pathway in text. An accessible version of KCIC's official theory-of-change diagram will be added when the source file is approved.",
   stations: [
     {
       id: "support",

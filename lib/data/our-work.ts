@@ -1,7 +1,7 @@
 export const ourWorkMeta = {
   title: "Our work",
   description:
-    "How KCIC supports climate enterprises: an integrated approach, six key sectors, shared priorities, and the partners who make the work possible.",
+    "KCIC services and interventions, six key sectors, shared priorities, and the partners who make the work possible.",
 }
 
 export const ourWorkIndex = {
@@ -11,7 +11,7 @@ export const ourWorkIndex = {
   chapters: [
     {
       number: "01",
-      title: "Our approach",
+      title: "Services & interventions",
       href: "/our-work#approach",
     },
     {
@@ -33,63 +33,41 @@ export const ourWorkIndex = {
 }
 
 export const ourWorkApproach = {
-  eyebrow: "01 Approach",
-  heading: "Five forms of support, working together.",
+  eyebrow: "01 Services",
+  heading: "KCIC services and interventions.",
   intro:
-    "KCIC provides holistic, country-driven support to accelerate the development, deployment, and transfer of climate technologies. Its approach combines five mutually reinforcing forms of support.",
-  note: "These are integrated services, not five mandatory stages.",
+    "KCIC provides holistic, country-driven support to accelerate climate enterprise. Six services and interventions work together across programmes and partnerships.",
+  note: "These are integrated offers, not a fixed sequence every business must follow.",
   pillars: [
     {
-      id: "financing",
-      title: "Innovative financing",
-      items: [
-        "Proof-of-concept and early-stage risk capital",
-        "Results-based financing",
-        "Climate venture facilities",
-        "Investment syndication and facilitation",
-        "Working-capital and consumer-finance facilitation",
-        "Transaction advisory",
-      ],
+      id: "enterprise-development-advisory",
+      title: "Enterprise Development & Advisory",
+      items: [],
     },
     {
-      id: "advisory",
-      title: "Advisory services",
-      items: [
-        "Business training in finance, tax, investment, marketing, strategy, and human resources",
-        "Capacity development and packaged services",
-        "Product design and development training",
-        "Mentorship",
-      ],
+      id: "access-to-finance",
+      title: "Access to Finance",
+      items: [],
     },
     {
-      id: "enabling",
-      title: "Enabling environment",
-      items: [
-        "Policy support, advice, and co-creation",
-        "International collaboration and Climate Innovation Center network relationships",
-        "Matching services",
-        "Regional outreach, partnerships, awards, competitions, conferences, and events",
-      ],
+      id: "innovation-technical-support",
+      title: "Innovation & Technical Support",
+      items: [],
     },
     {
-      id: "information",
-      title: "Access to information",
-      items: [
-        "Market intelligence, sector trends, and competitive-landscape insight",
-        "Technology quality and performance data",
-        "Finance information and databases",
-      ],
+      id: "market-access-linkages",
+      title: "Market Access & Linkages",
+      items: [],
     },
     {
-      id: "facilities",
-      title: "Access to facilities",
-      items: [
-        "Office and networking space",
-        "Intellectual-property support",
-        "Testing and demonstration access",
-        "Product design, adaptation, and prototyping",
-        "Certification and standardization support",
-      ],
+      id: "research-knowledge",
+      title: "Research & Knowledge",
+      items: [],
+    },
+    {
+      id: "policy-ecosystem-development",
+      title: "Policy & Ecosystem Development",
+      items: [],
     },
   ],
 }
@@ -171,7 +149,10 @@ export const ourWorkPartners = {
 }
 
 export const workPageMeta = {
-  approach: ourWorkMeta,
+  approach: {
+    title: "Services & interventions",
+    description: ourWorkApproach.intro,
+  },
   sectors: {
     title: "Key sectors",
     description: ourWorkSectors.intro,

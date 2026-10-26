@@ -97,8 +97,8 @@ const groups: { title: string; items: NavItem[] }[] = [
     title: "Our work",
     items: [
       {
-        title: "Our approach",
-        description: "How we support climate innovation",
+        title: "Services & interventions",
+        description: "Six ways KCIC supports climate enterprise",
         href: "/our-work#approach",
         icon: Compass,
       },

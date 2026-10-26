@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { JsonLd } from "@/components/seo/json-ld"
-import { SiteHeader } from "@/components/site-header"
+import { SiteHeaderShell } from "@/components/site-header-shell"
 
 import "./globals.css"
 import {
@@ -27,7 +27,7 @@ export default function RootLayout({
     >
       <body>
         <JsonLd data={[buildOrganizationJsonLd(), buildWebSiteJsonLd()]} />
-        <SiteHeader />
+        <SiteHeaderShell />
         {children}
       </body>
     </html>

@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import {
   ArrowUpRight,
   CaretDown,
@@ -32,6 +32,10 @@ import {
   Microphone,
   Broadcast,
   UsersThree,
+  FilePdf,
+  Article,
+  Scroll,
+  Notepad,
 } from "@phosphor-icons/react"
 import type { Icon } from "@phosphor-icons/react"
 import logo from "@/public/KCIC logo.png"
@@ -42,7 +46,17 @@ function hrefPath(href: string) {
   return href.split("#")[0]
 }
 
-type NavItem = { title: string; description: string; href: string; icon: Icon }
+function isExternalNavHref(href: string) {
+  return href.startsWith("http://") || href.startsWith("https://")
+}
+
+type NavItem = {
+  title: string
+  description: string
+  href: string
+  icon: Icon
+  badge?: number
+}
 const groups: { title: string; items: NavItem[] }[] = [
   {
     title: "About us",
@@ -164,7 +178,35 @@ const groups: { title: string; items: NavItem[] }[] = [
         href: "/impact#reports",
         icon: Files,
       },
-     
+    ],
+  },
+  {
+    title: "Knowledge hub",
+    items: [
+      {
+        title: "Impact reports",
+        description: "Explore our results and insights",
+        href: "/impact#reports",
+        icon: FilePdf,
+      },
+      {
+        title: "Publications",
+        description: "Research, guides and long-form resources",
+        href: "/knowledge-hub/publications",
+        icon: BookOpen,
+      },
+      {
+        title: "Policy briefs",
+        description: "Evidence and recommendations for decision-makers",
+        href: "/knowledge-hub/policy-briefs",
+        icon: Scroll,
+      },
+      {
+        title: "Fact sheets",
+        description: "Quick reference on KCIC programmes and impact",
+        href: "/knowledge-hub/fact-sheets",
+        icon: Notepad,
+      },
     ],
   },
   {
@@ -176,36 +218,61 @@ const groups: { title: string; items: NavItem[] }[] = [
         href: "/newsroom",
         icon: Newspaper,
       },
-      // {
-      //   title: "Blogs",
-      //   description: "Ideas and perspectives on climate",
-      //   href: "/newsroom/blogs",
-      //   icon: PencilLine,
-      // },
-      // {
-      //   title: "Events",
-      //   description: "Connect, learn and get involved",
-      //   href: "/newsroom/events",
-      //   icon: CalendarBlank,
-      // },
+      {
+        title: "Research",
+        description: "Browse our latest research",
+        href: "/newsroom/research",
+        icon: BookOpen,
+      },
+      {
+        title: "Case studies",
+        description: "Read inspiring case studies",
+        href: "/newsroom/case-studies",
+        icon: PencilLine,
+      },
+      {
+        title: "Events",
+        description: "Connect, learn and get involved",
+        href: "/newsroom/events",
+        icon: CalendarBlank,
+      },
       {
         title: "Podcast",
         description: "Listen to climate conversations",
         href: "https://sustainablyspeaking.africa",
         icon: Microphone,
       },
-      // {
-      //   title: "Media coverage",
-      //   description: "KCIC in the headlines",
-      //   href: "/newsroom/media-coverage",
-      //   icon: Broadcast,
-      // },
+      {
+        title: "KCIC on the News",
+        description: "KCIC in the headlines",
+        href: "/newsroom/media-coverage",
+        icon: Broadcast,
+      },
     ],
   },
 ]
 
-export function SiteHeader() {
+interface SiteHeaderProps {
+  openProgrammesCount: number
+}
+
+export function SiteHeader({ openProgrammesCount }: SiteHeaderProps) {
   const pathname = usePathname()
+  const navigationGroups = useMemo(
+    () =>
+      groups.map((group) => {
+        if (group.title !== "Our programmes") return group
+        const openItem: NavItem = {
+          title: "Open programmes",
+          description: "Active programmes you can explore or apply to",
+          href: "/programmes#open",
+          icon: Target,
+          badge: openProgrammesCount,
+        }
+        return { ...group, items: [openItem, ...group.items] }
+      }),
+    [openProgrammesCount]
+  )
   const [open, setOpen] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -316,7 +383,7 @@ export function SiteHeader() {
           data-mobile-open={mobileOpen}
         >
           <ul className="m-0 flex list-none items-center gap-1 p-0 max-[1050px]:flex-col max-[1050px]:items-stretch">
-            {groups.map((group, index) => {
+            {navigationGroups.map((group, index) => {
               const expanded = open === group.title
               const active = group.items.some((item) => {
                 const path = hrefPath(item.href)
@@ -362,21 +429,33 @@ export function SiteHeader() {
                     id={`nav-panel-${index}`}
                     className={cn(
                       "absolute top-[calc(100%+0.875rem)] left-[-0.5rem] max-h-[calc(100dvh-9.375rem)] w-[355px] overflow-y-auto rounded-[18px] bg-white p-2.5 shadow-[0_12px_36px_rgba(39,51,42,0.10),0_2px_3px_rgba(39,51,42,0.05)] max-[1050px]:static max-[1050px]:max-h-none max-[1050px]:w-full max-[1050px]:px-0 max-[1050px]:pb-1.5 max-[1050px]:shadow-none",
-                      index >= groups.length - 2 &&
+                      index >= navigationGroups.length - 2 &&
                         "right-[-0.5rem] left-auto max-[1050px]:right-auto"
                     )}
                     hidden={!expanded}
                   >
                     <ul className="m-0 list-none p-0">
                       {group.items.map(
-                        ({ title, description, href, icon: ItemIcon }) => (
+                        ({
+                          title,
+                          description,
+                          href,
+                          icon: ItemIcon,
+                          badge,
+                        }) => {
+                          const external = isExternalNavHref(href)
+                          return (
                           <li key={href}>
                             <Link
                               href={href}
                               prefetch={false}
+                              target={external ? "_blank" : undefined}
+                              rel={external ? "noopener noreferrer" : undefined}
                               className="flex min-h-[72px] items-center gap-3.5 rounded-[10px] px-2.5 py-3 no-underline transition-colors duration-150 hover:bg-[#f4f8ee] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-[68px] max-[1050px]:gap-2.5 max-[1050px]:px-3"
                               onClick={(event) => {
-                                handleSamePageHashClick(event, href, pathname)
+                                if (!external) {
+                                  handleSamePageHashClick(event, href, pathname)
+                                }
                                 close()
                               }}
                               aria-current={
@@ -387,8 +466,16 @@ export function SiteHeader() {
                                 <ItemIcon size={20} />
                               </span>
                               <span className="flex min-w-0 flex-col gap-1">
-                                <span className="text-[13px] leading-[1.4] font-medium">
+                                <span className="flex flex-wrap items-center gap-2 text-[13px] leading-[1.4] font-medium">
                                   {title}
+                                  {badge !== undefined ? (
+                                    <span
+                                      className="inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#7fcc2f] px-1.5 text-[10px] font-semibold tabular-nums text-[#1b241d]"
+                                      aria-label={`${badge} open ${badge === 1 ? "programme" : "programmes"}`}
+                                    >
+                                      {badge}
+                                    </span>
+                                  ) : null}
                                 </span>
                                 <span className="text-[11.5px] leading-[1.45] text-[#626b5e] max-[1050px]:text-xs">
                                   {description}
@@ -400,7 +487,8 @@ export function SiteHeader() {
                               />
                             </Link>
                           </li>
-                        )
+                          )
+                        }
                       )}
                     </ul>
                   </div>

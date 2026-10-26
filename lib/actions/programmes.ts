@@ -4,7 +4,7 @@ import db from '@/db/drizzle';
 import { programmes, programmeSponsors } from '@/db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { eq, asc } from 'drizzle-orm/sql';
+import { eq, asc, count } from 'drizzle-orm/sql';
 import { ensureLiveCmsData } from '@/lib/cms-live';
 
 // Types for the expanded programme data
@@ -77,6 +77,21 @@ const programmeInputSchema = z.object({
 /**
  * Get all programmes ordered by their order field
  */
+export async function countOpenProgrammes(): Promise<number> {
+  try {
+    await ensureLiveCmsData()
+    const [row] = await db
+      .select({ value: count() })
+      .from(programmes)
+      .where(eq(programmes.isActive, true))
+
+    return row?.value ?? 0
+  } catch (error) {
+    console.error('Error counting open programmes:', error)
+    return 0
+  }
+}
+
 export async function listProgrammes(): Promise<ActionResponse<ProgrammeData[]>> {
   try {
     await ensureLiveCmsData()

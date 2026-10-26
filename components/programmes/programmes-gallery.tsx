@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils"
 
 const tabs: { id: ProgrammeGalleryTab; label: string }[] = [
   { id: "all", label: programmesGalleryCopy.tabAll },
+  { id: "open", label: programmesGalleryCopy.tabOpen },
   { id: "flagship", label: programmesGalleryCopy.tabFlagship },
   { id: "special", label: programmesGalleryCopy.tabSpecial },
   { id: "past", label: programmesGalleryCopy.tabPast },

@@ -22,6 +22,7 @@ export const programmesGalleryCopy = {
   tabFlagship: "Flagship",
   tabSpecial: "Special",
   tabPast: "Past",
+  tabOpen: "Open",
   openStatus: "Open",
   completedStatus: "Completed",
   categoryFlagship: "Flagship",
@@ -109,11 +110,18 @@ export function getProgrammeContentSections(
     .filter((section): section is ProgrammeRenderedSection => section !== null)
 }
 
-export type ProgrammeGalleryTab = "all" | "flagship" | "special" | "past"
+export type ProgrammeGalleryTab = "all" | "open" | "flagship" | "special" | "past"
 
 export const programmeTabFromHash = (hash: string): ProgrammeGalleryTab | null => {
   const id = hash.replace("#", "").toLowerCase()
-  if (id === "flagship" || id === "special" || id === "past") return id
+  if (
+    id === "open" ||
+    id === "flagship" ||
+    id === "special" ||
+    id === "past"
+  ) {
+    return id
+  }
   return null
 }
 
@@ -139,6 +147,7 @@ export function filterProgrammesByTab(
   tab: ProgrammeGalleryTab
 ) {
   if (tab === "all") return items
+  if (tab === "open") return items.filter((item) => item.isActive)
   if (tab === "past") return items.filter((item) => !item.isActive)
   if (tab === "flagship") {
     return items.filter((item) => item.isActive && item.category === "flagship")

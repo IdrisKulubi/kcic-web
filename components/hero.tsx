@@ -67,20 +67,14 @@ export function Hero() {
       </picture>
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,45,28,0.93)_0%,rgba(18,45,28,0.76)_35%,rgba(18,45,28,0.12)_72%)] max-md:bg-[linear-gradient(0deg,rgba(18,45,28,0.92)_0%,rgba(18,45,28,0.58)_52%,rgba(18,45,28,0.10)_100%)]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_85%_70%_at_50%_45%,rgba(18,45,28,0.42)_0%,rgba(18,45,28,0.78)_55%,rgba(18,45,28,0.88)_100%)]"
       />
-      <div className="flex flex-col items-start justify-center px-5 pt-28 pb-12 max-sm:justify-end max-sm:pt-22 max-sm:pb-8 sm:px-8 md:w-1/2 md:px-[clamp(2rem,5vw,4.25rem)]">
+      <div className="col-start-1 row-start-1 flex min-h-[inherit] flex-col items-center justify-center px-5 py-20 text-center sm:px-8 sm:py-24 md:px-[clamp(2rem,5vw,4.25rem)]">
         <h1
           id="hero-title"
-          className="m-0 text-left font-['Gotham','Century_Gothic',Arial,sans-serif] text-[clamp(2.6rem,5.4vw,4.75rem)] leading-[1.02] font-medium tracking-[-0.04em] text-[#f7fbf5] max-sm:text-[clamp(2.15rem,11vw,3rem)]"
+          className="m-0 max-w-5xl text-balance font-['Gotham','Century_Gothic',Arial,sans-serif] text-[clamp(2rem,4.5vw,4.75rem)] leading-[1.1] font-medium tracking-[-0.04em] text-[#f7fbf5]"
         >
-          Catalyzing
-          <br />
-          climate
-          <br />
-          entrepreneurship
-          <br />
-          in Africa.
+          Catalyzing climate entrepreneurship in Africa.
         </h1>
         <Link
           href="/programmes"

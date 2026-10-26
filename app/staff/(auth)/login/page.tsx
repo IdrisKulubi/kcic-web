@@ -1,18 +1,15 @@
 "use client"
 
+import Image from "next/image"
+import Link from "next/link"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { signIn } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import logo from "@/public/KCIC logo.png"
+import { WarningCircle } from "@phosphor-icons/react"
 
 export default function StaffLoginPage() {
   const router = useRouter()
@@ -35,7 +32,7 @@ export default function StaffLoginPage() {
     setPending(false)
 
     if (result.error) {
-      setError(result.error.message ?? "Sign in failed. Check your credentials.")
+      setError("That email and password don't match a staff account.")
       return
     }
 
@@ -44,45 +41,81 @@ export default function StaffLoginPage() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Staff sign in</CardTitle>
-        <CardDescription>
-          Sign in to manage KCIC website content.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          {error ? (
-            <p className="text-sm text-destructive" role="alert">{error}</p>
-          ) : null}
-          <Button type="submit" disabled={pending} className="w-full">
-            {pending ? "Signing in…" : "Sign in"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <div className="flex w-full max-w-sm flex-col gap-8">
+      <div className="flex flex-col items-center gap-4 text-center">
+        <Image
+          src={logo}
+          alt="Kenya Climate Innovation Center"
+          sizes="56px"
+          priority
+          className="h-auto w-14"
+        />
+        <div className="flex flex-col gap-1">
+          <h1 className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl font-bold tracking-[-0.02em]">
+            Staff sign in
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Manage news and content on the KCIC website.
+          </p>
+        </div>
+      </div>
+
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5 rounded-xl bg-card p-6 ring-1 ring-border"
+      >
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="email">Work email</Label>
+          <Input
+            id="email"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            aria-invalid={Boolean(error)}
+            onChange={(e) => setEmail(e.target.value)}
+            className="h-10"
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            value={password}
+            aria-invalid={Boolean(error)}
+            aria-describedby={error ? "login-error" : undefined}
+            onChange={(e) => setPassword(e.target.value)}
+            className="h-10"
+          />
+        </div>
+        {error ? (
+          <p
+            id="login-error"
+            role="alert"
+            className="flex gap-2 rounded-lg bg-destructive/8 p-3 text-sm text-destructive"
+          >
+            <WarningCircle className="mt-0.5 size-4 shrink-0" weight="fill" aria-hidden />
+            {error}
+          </p>
+        ) : null}
+        <Button
+          type="submit"
+          disabled={pending}
+          className="h-10 w-full rounded-lg font-semibold"
+        >
+          {pending ? "Signing in…" : "Sign in"}
+        </Button>
+      </form>
+
+      <p className="text-center text-xs text-muted-foreground">
+        No account? Ask a colleague with staff access to add you.{" "}
+        <Link href="/" className="underline underline-offset-3 hover:text-foreground">
+          Back to the website
+        </Link>
+      </p>
+    </div>
   )
 }

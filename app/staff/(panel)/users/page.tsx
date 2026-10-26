@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { listStaffUsersAction } from "@/lib/actions/staff-users"
 import { AddStaffDialog } from "@/components/staff/add-staff-dialog"
+import { StaffPageHeader } from "@/components/staff/staff-page-header"
 import {
   Table,
   TableBody,
@@ -11,7 +12,7 @@ import {
 } from "@/components/ui/table"
 
 export const metadata: Metadata = {
-  title: "Staff users",
+  title: "Staff accounts",
 }
 
 export default async function StaffUsersPage() {
@@ -19,17 +20,13 @@ export default async function StaffUsersPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Staff users</h1>
-          <p className="text-sm text-muted-foreground">
-            Accounts that can sign in to manage website content.
-          </p>
-        </div>
-        <AddStaffDialog />
-      </div>
+      <StaffPageHeader
+        title="Staff accounts"
+        description="People who can sign in and edit website content."
+        actions={<AddStaffDialog />}
+      />
 
-      <div className="overflow-hidden rounded-lg border bg-background">
+      <div className="overflow-hidden rounded-xl bg-card ring-1 ring-border">
         <Table>
           <TableHeader>
             <TableRow>

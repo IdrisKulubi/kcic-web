@@ -14,7 +14,8 @@ export function SignOutButton() {
       variant="ghost"
       size="sm"
       disabled={pending}
-      className="w-full justify-start gap-2"
+      aria-label="Sign out"
+      className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0"
       onClick={() => {
         startTransition(async () => {
           await signOut()
@@ -23,7 +24,9 @@ export function SignOutButton() {
       }}
     >
       <SignOut className="size-4" />
-      Sign out
+      <span className="group-data-[collapsible=icon]:hidden">
+        {pending ? "Signing out…" : "Sign out"}
+      </span>
     </Button>
   )
 }

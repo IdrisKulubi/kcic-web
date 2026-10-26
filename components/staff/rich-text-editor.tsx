@@ -5,11 +5,15 @@ import Image from "@tiptap/extension-image"
 import Link from "@tiptap/extension-link"
 import Placeholder from "@tiptap/extension-placeholder"
 import Youtube from "@tiptap/extension-youtube"
-import { EditorContent, useEditor } from "@tiptap/react"
+import { EditorContent, useEditor, useEditorState } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { newsArticleBodyClassName } from "@/lib/news-article-media"
 import { useUploadThing } from "@/utils/uploadthing"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import {
   TextB,
@@ -27,6 +31,7 @@ import {
 } from "@phosphor-icons/react"
 
 interface RichTextEditorProps {
+  id?: string
   value: string
   onChange: (html: string) => void
   onWordCountChange?: (wordCount: number) => void
@@ -41,6 +46,7 @@ function countWords(html: string) {
 }
 
 export function RichTextEditor({
+  id,
   value,
   onChange,
   onWordCountChange,
@@ -61,10 +67,13 @@ export function RichTextEditor({
       Image,
       Youtube.configure({ nocookie: true }),
       Placeholder.configure({
-        placeholder: "Write the full article…",
+        placeholder: "Tell the story. Use headings to break up long articles.",
       }),
     ],
     content: value,
+    onCreate: ({ editor: ed }) => {
+      onWordCountChange?.(countWords(ed.getHTML()))
+    },
     onUpdate: ({ editor: ed }) => {
       const html = ed.getHTML()
       onChange(html)
@@ -72,18 +81,35 @@ export function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: cn(
-          newsArticleBodyClassName,
-          "min-h-[22rem] rounded-b-xl bg-[#fbfcfb] px-4 py-4 text-[#1b241d] focus:outline-none"
-        ),
+        ...(id ? { id } : {}),
+        "aria-label": "Article body",
+        class: "staff-prose mx-auto min-h-[24rem] px-5 py-6 focus:outline-none md:px-10 md:py-8",
       },
     },
   })
 
+  const state = useEditorState({
+    editor,
+    selector: ({ editor: ed }) =>
+      ed
+        ? {
+            h2: ed.isActive("heading", { level: 2 }),
+            h3: ed.isActive("heading", { level: 3 }),
+            bold: ed.isActive("bold"),
+            italic: ed.isActive("italic"),
+            bulletList: ed.isActive("bulletList"),
+            orderedList: ed.isActive("orderedList"),
+            blockquote: ed.isActive("blockquote"),
+            link: ed.isActive("link"),
+            canUndo: ed.can().undo(),
+            canRedo: ed.can().redo(),
+          }
+        : null,
+  })
+
   useEffect(() => {
     if (!editor) return
-    const current = editor.getHTML()
-    if (value !== current && value !== "<p></p>") {
+    if (value !== editor.getHTML() && value !== "<p></p>") {
       editor.commands.setContent(value || "", { emitUpdate: false })
     }
   }, [editor, value])
@@ -100,7 +126,7 @@ export function RichTextEditor({
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run()
   }, [editor])
 
-  const addImage = useCallback(async () => {
+  const addImage = useCallback(() => {
     if (!editor) return
     const input = document.createElement("input")
     input.type = "file"
@@ -109,9 +135,9 @@ export function RichTextEditor({
       const file = input.files?.[0]
       if (!file) return
       const uploaded = await startUpload([file])
-      const url = uploaded?.[0]?.url
+      const url = uploaded?.[0]?.ufsUrl ?? uploaded?.[0]?.url
       if (url) {
-        editor.chain().focus().setImage({ src: url }).run()
+        editor.chain().focus().setImage({ src: url, alt: "" }).run()
       }
     }
     input.click()
@@ -124,118 +150,174 @@ export function RichTextEditor({
     editor.commands.setYoutubeVideo({ src: url })
   }, [editor])
 
-  if (!editor) {
-    return (
-      <div className="rounded-xl border border-[#d9e1d8] bg-[#f4f7f2] p-8 text-sm text-[#566159]">
-        Loading editor…
-      </div>
-    )
-  }
-
   return (
-    <div className="overflow-hidden rounded-xl border border-[#d9e1d8] bg-[#fbfcfb]">
-      <div className="flex flex-wrap gap-1 border-b border-[#d9e1d8] bg-[#f4f7f2] p-2">
+    <div className="rounded-xl bg-card ring-1 ring-border focus-within:ring-2 focus-within:ring-ring/40">
+      <div
+        role="toolbar"
+        aria-label="Formatting"
+        aria-controls={id}
+        className="sticky top-12 z-10 flex flex-wrap items-center gap-0.5 rounded-t-xl border-b bg-card/95 px-2 py-1.5 backdrop-blur-sm"
+      >
         <ToolbarButton
-          label="Heading 2"
-          pressed={editor.isActive("heading", { level: 2 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          label="Heading"
+          shortcut="Ctrl+Alt+2"
+          pressed={state?.h2}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
         >
-          <TextHTwo className="size-4" />
+          <TextHTwo />
         </ToolbarButton>
         <ToolbarButton
-          label="Heading 3"
-          pressed={editor.isActive("heading", { level: 3 })}
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          label="Subheading"
+          shortcut="Ctrl+Alt+3"
+          pressed={state?.h3}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
         >
-          <TextHThree className="size-4" />
+          <TextHThree />
         </ToolbarButton>
+        <ToolbarDivider />
         <ToolbarButton
           label="Bold"
-          pressed={editor.isActive("bold")}
-          onClick={() => editor.chain().focus().toggleBold().run()}
+          shortcut="Ctrl+B"
+          pressed={state?.bold}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleBold().run()}
         >
-          <TextB className="size-4" />
+          <TextB />
         </ToolbarButton>
         <ToolbarButton
           label="Italic"
-          pressed={editor.isActive("italic")}
-          onClick={() => editor.chain().focus().toggleItalic().run()}
+          shortcut="Ctrl+I"
+          pressed={state?.italic}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleItalic().run()}
         >
-          <TextItalic className="size-4" />
+          <TextItalic />
         </ToolbarButton>
         <ToolbarButton
-          label="Bullet list"
-          pressed={editor.isActive("bulletList")}
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          label="Link"
+          pressed={state?.link}
+          disabled={!editor}
+          onClick={setLink}
         >
-          <ListBullets className="size-4" />
+          <LinkIcon />
+        </ToolbarButton>
+        <ToolbarDivider />
+        <ToolbarButton
+          label="Bulleted list"
+          pressed={state?.bulletList}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleBulletList().run()}
+        >
+          <ListBullets />
         </ToolbarButton>
         <ToolbarButton
           label="Numbered list"
-          pressed={editor.isActive("orderedList")}
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          pressed={state?.orderedList}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleOrderedList().run()}
         >
-          <ListNumbers className="size-4" />
+          <ListNumbers />
         </ToolbarButton>
         <ToolbarButton
           label="Quote"
-          pressed={editor.isActive("blockquote")}
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          pressed={state?.blockquote}
+          disabled={!editor}
+          onClick={() => editor?.chain().focus().toggleBlockquote().run()}
         >
-          <Quotes className="size-4" />
+          <Quotes />
         </ToolbarButton>
-        <ToolbarButton label="Link" onClick={setLink}>
-          <LinkIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton label="Image" disabled={isUploading} onClick={addImage}>
-          <ImageIcon className="size-4" />
-        </ToolbarButton>
-        <ToolbarButton label="YouTube" onClick={addYoutube}>
-          <YoutubeLogo className="size-4" />
-        </ToolbarButton>
+        <ToolbarDivider />
         <ToolbarButton
-          label="Undo"
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
+          label={isUploading ? "Uploading image…" : "Insert image"}
+          disabled={!editor || isUploading}
+          onClick={addImage}
         >
-          <ArrowCounterClockwise className="size-4" />
+          <ImageIcon />
         </ToolbarButton>
-        <ToolbarButton
-          label="Redo"
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-        >
-          <ArrowClockwise className="size-4" />
+        <ToolbarButton label="Embed YouTube video" disabled={!editor} onClick={addYoutube}>
+          <YoutubeLogo />
         </ToolbarButton>
+        <div className="ml-auto flex items-center gap-0.5">
+          <ToolbarButton
+            label="Undo"
+            shortcut="Ctrl+Z"
+            disabled={!state?.canUndo}
+            onClick={() => editor?.chain().focus().undo().run()}
+          >
+            <ArrowCounterClockwise />
+          </ToolbarButton>
+          <ToolbarButton
+            label="Redo"
+            shortcut="Ctrl+Shift+Z"
+            disabled={!state?.canRedo}
+            onClick={() => editor?.chain().focus().redo().run()}
+          >
+            <ArrowClockwise />
+          </ToolbarButton>
+        </div>
       </div>
-      <EditorContent editor={editor} />
+      {editor ? (
+        <EditorContent editor={editor} />
+      ) : (
+        <div className="min-h-[24rem] px-5 py-6 md:px-10 md:py-8" aria-hidden>
+          <div className="mx-auto flex max-w-[70ch] flex-col gap-3">
+            <div className="h-4 w-11/12 animate-pulse rounded bg-muted" />
+            <div className="h-4 w-full animate-pulse rounded bg-muted" />
+            <div className="h-4 w-4/5 animate-pulse rounded bg-muted" />
+          </div>
+        </div>
+      )}
     </div>
   )
 }
 
+function ToolbarDivider() {
+  return <span aria-hidden className="mx-1 h-5 w-px bg-border" />
+}
+
 function ToolbarButton({
   label,
+  shortcut,
   children,
   onClick,
   pressed,
   disabled,
 }: {
   label: string
+  shortcut?: string
   children: React.ReactNode
   onClick: () => void
   pressed?: boolean
   disabled?: boolean
 }) {
   return (
-    <Button
-      type="button"
-      variant={pressed ? "secondary" : "ghost"}
-      size="icon-sm"
-      aria-label={label}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {children}
-    </Button>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={label}
+            aria-pressed={pressed}
+            disabled={disabled}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={onClick}
+            className={cn(
+              "rounded-md text-muted-foreground hover:text-foreground [&_svg]:size-[1.05rem]",
+              pressed && "bg-secondary text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground"
+            )}
+          />
+        }
+      >
+        {children}
+      </TooltipTrigger>
+      <TooltipContent side="bottom">
+        {label}
+        {shortcut ? <span className="ml-2 opacity-60">{shortcut}</span> : null}
+      </TooltipContent>
+    </Tooltip>
   )
 }

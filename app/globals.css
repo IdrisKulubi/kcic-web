@@ -128,6 +128,119 @@
     }
 }
 
+/* Staff workspace: KCIC tokens mapped onto the shadcn contract.
+   Scoped via :has() so portalled popovers and dialogs inherit it too. */
+:root:has([data-staff-theme]) {
+    --background: oklch(0.975 0.007 130);
+    --foreground: oklch(0.245 0.02 150);
+    --card: oklch(0.995 0.003 130);
+    --card-foreground: oklch(0.245 0.02 150);
+    --popover: oklch(0.995 0.003 130);
+    --popover-foreground: oklch(0.245 0.02 150);
+    --primary: oklch(0.77 0.19 132);
+    --primary-foreground: oklch(0.245 0.02 150);
+    --secondary: oklch(0.948 0.02 132);
+    --secondary-foreground: oklch(0.44 0.11 133);
+    --muted: oklch(0.955 0.008 135);
+    --muted-foreground: oklch(0.47 0.022 150);
+    --accent: oklch(0.948 0.02 132);
+    --accent-foreground: oklch(0.44 0.11 133);
+    --destructive: oklch(0.52 0.19 28);
+    --border: oklch(0.9 0.017 145);
+    --input: oklch(0.87 0.018 145);
+    --ring: oklch(0.44 0.11 133);
+    --sidebar: oklch(0.995 0.003 130);
+    --sidebar-foreground: oklch(0.245 0.02 150);
+    --sidebar-primary: oklch(0.44 0.11 133);
+    --sidebar-primary-foreground: oklch(0.99 0.005 130);
+    --sidebar-accent: oklch(0.948 0.02 132);
+    --sidebar-accent-foreground: oklch(0.44 0.11 133);
+    --sidebar-border: oklch(0.9 0.017 145);
+    --sidebar-ring: oklch(0.44 0.11 133);
+}
+
+.staff-prose {
+    max-width: 70ch;
+    color: var(--foreground);
+    font-size: 1rem;
+    line-height: 1.75;
+}
+.staff-prose > * + * {
+    margin-top: 1em;
+}
+.staff-prose h2,
+.staff-prose h3 {
+    font-family: "Gotham", "Century Gothic", Arial, sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+}
+.staff-prose h2 {
+    margin-top: 1.75em;
+    font-size: 1.5rem;
+}
+.staff-prose h3 {
+    margin-top: 1.5em;
+    font-size: 1.2rem;
+}
+.staff-prose > :first-child {
+    margin-top: 0;
+}
+.staff-prose ul {
+    list-style: disc;
+    padding-left: 1.4em;
+}
+.staff-prose ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+}
+.staff-prose li + li {
+    margin-top: 0.35em;
+}
+.staff-prose li > p {
+    margin: 0;
+}
+.staff-prose blockquote {
+    border-radius: 0.75rem;
+    background: var(--secondary);
+    padding: 1rem 1.25rem;
+    color: var(--secondary-foreground);
+    font-style: italic;
+}
+.staff-prose a {
+    color: oklch(0.44 0.09 233);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.staff-prose strong {
+    font-weight: 600;
+}
+.staff-prose img {
+    display: block;
+    max-width: 100%;
+    max-height: 28rem;
+    height: auto;
+    margin-inline: auto;
+    border-radius: 0.75rem;
+}
+.staff-prose iframe {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 0.75rem;
+}
+.staff-prose .ProseMirror-selectednode {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+}
+.staff-prose p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--muted-foreground);
+    pointer-events: none;
+}
+
 :root {
     --canvas-gutter: clamp(0.75rem, 1.5vw, 1.25rem);
     --canvas-radius: clamp(1.25rem, 2.2vw, 2rem);

@@ -49,8 +49,8 @@ export function AddStaffDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button type="button">
-            <Plus className="size-4" />
+          <Button type="button" className="h-10 rounded-lg px-4 font-semibold">
+            <Plus className="size-4" weight="bold" />
             Add staff
           </Button>
         }

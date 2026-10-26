@@ -9,6 +9,7 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select"
+import { MagnifyingGlass } from "@phosphor-icons/react"
 
 interface NewsFiltersProps {
   categories: string[]
@@ -36,37 +37,51 @@ export function NewsFilters({ categories }: NewsFiltersProps) {
 
   return (
     <form
-      className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end"
+      role="search"
+      aria-busy={pending}
+      className="flex flex-col gap-3 sm:flex-row sm:items-center"
       onSubmit={(event) => {
         event.preventDefault()
-        const form = event.currentTarget
-        const data = new FormData(form)
-        applyFilters({
-          q: String(data.get("q") ?? ""),
-          category: String(data.get("category") ?? ""),
-        })
+        const data = new FormData(event.currentTarget)
+        applyFilters({ q: String(data.get("q") ?? "") })
       }}
     >
-      <div className="flex min-w-[200px] flex-1 flex-col gap-1.5">
-        <Label htmlFor="news-search">Search</Label>
+      <div className="relative flex-1 sm:max-w-sm">
+        <Label htmlFor="news-search" className="sr-only">
+          Search articles
+        </Label>
+        <MagnifyingGlass
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden
+        />
         <Input
           id="news-search"
           name="q"
-          placeholder="Title or excerpt"
+          type="search"
+          placeholder="Search headlines and summaries"
           defaultValue={q}
+          className="h-10 bg-card pl-9"
         />
       </div>
-      <div className="flex w-full flex-col gap-1.5 sm:w-48">
-        <Label htmlFor="news-category">Category</Label>
-        <NativeSelect id="news-category" name="category" defaultValue={category}>
+      <div className="sm:w-52">
+        <Label htmlFor="news-filter-category" className="sr-only">
+          Category
+        </Label>
+        <NativeSelect
+          id="news-filter-category"
+          name="category"
+          defaultValue={category}
+          className="w-full [&_select]:h-10 [&_select]:bg-card"
+          onChange={(event) => applyFilters({ category: event.target.value })}
+        >
           <NativeSelectOption value="">All categories</NativeSelectOption>
           {categories.map((cat) => (
             <NativeSelectOption key={cat} value={cat}>{cat}</NativeSelectOption>
           ))}
         </NativeSelect>
       </div>
-      <Button type="submit" disabled={pending}>
-        {pending ? "Filtering…" : "Apply"}
+      <Button type="submit" variant="outline" disabled={pending} className="h-10 rounded-lg">
+        {pending ? "Searching…" : "Search"}
       </Button>
     </form>
   )

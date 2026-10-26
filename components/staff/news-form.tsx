@@ -1,17 +1,16 @@
 "use client"
 
-import "@uploadthing/react/styles.css"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { RemoteThumbnail } from "@/components/remote-thumbnail"
 import { useEffect, useMemo, useState, useTransition } from "react"
 import {
   createNewsArticle,
   updateNewsArticle,
   type NewsData,
 } from "@/lib/actions/news"
-import { estimateReadTime, slugifyTitle } from "@/lib/staff/slug"
+import { slugifyTitle } from "@/lib/staff/slug"
 import { RichTextEditor } from "@/components/staff/rich-text-editor"
-import { UploadDropzone } from "@/utils/uploadthing"
+import { ThumbnailField } from "@/components/staff/thumbnail-field"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -24,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { format } from "date-fns"
-import { CalendarBlank } from "@phosphor-icons/react"
+import { ArrowSquareOut, CalendarBlank, WarningCircle } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 
 interface NewsFormProps {
@@ -33,10 +32,49 @@ interface NewsFormProps {
   categories: string[]
 }
 
+type FieldName = "title" | "slug" | "excerpt" | "category" | "thumbnail" | "readTime"
+type FieldErrors = Partial<Record<FieldName, string>>
+
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+const TITLE_MAX = 200
+const EXCERPT_MIN = 20
+const EXCERPT_MAX = 500
+
+function validate(values: {
+  title: string
+  slug: string
+  excerpt: string
+  category: string
+  thumbnail: string
+  readTime: string
+}): FieldErrors {
+  const errors: FieldErrors = {}
+  const title = values.title.trim()
+  const excerpt = values.excerpt.trim()
+  const category = values.category.trim()
+
+  if (title.length < 5) errors.title = "Write a headline of at least 5 characters."
+  if (!values.slug.trim()) errors.slug = "Add a URL slug."
+  else if (!SLUG_PATTERN.test(values.slug.trim()))
+    errors.slug = "Use lowercase letters, numbers and single hyphens only."
+  if (excerpt.length < EXCERPT_MIN)
+    errors.excerpt = `The summary needs at least ${EXCERPT_MIN} characters (${excerpt.length} so far).`
+  if (category.length < 2) errors.category = "Choose or type a category."
+  if (!values.thumbnail.trim()) errors.thumbnail = "Upload a cover image."
+  if (values.readTime.length > 30) errors.readTime = "Keep this under 30 characters."
+  return errors
+}
+
+function readTimeFromWords(words: number) {
+  if (words === 0) return ""
+  return `${Math.max(1, Math.ceil(words / 200))} min read`
+}
+
 export function NewsForm({ mode, article, categories }: NewsFormProps) {
   const router = useRouter()
   const [pending, startTransition] = useTransition()
-  const [error, setError] = useState<string | null>(null)
+  const [serverError, setServerError] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
 
   const [title, setTitle] = useState(article?.title ?? "")
   const [slug, setSlug] = useState(article?.slug ?? "")
@@ -47,12 +85,12 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
   const [content, setContent] = useState(article?.content ?? "")
   const [readTime, setReadTime] = useState(article?.readTime ?? "")
   const [readTimeTouched, setReadTimeTouched] = useState(Boolean(article?.readTime))
+  const [wordCount, setWordCount] = useState(0)
   const [featured, setFeatured] = useState(article?.featured ?? false)
   const [publishedAt, setPublishedAt] = useState<Date>(
-    article?.publishedAt
-      ? new Date(article.publishedAt)
-      : new Date()
+    article?.publishedAt ? new Date(article.publishedAt) : new Date()
   )
+  const [dateOpen, setDateOpen] = useState(false)
 
   useEffect(() => {
     if (!slugTouched && mode === "create") {
@@ -60,25 +98,35 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
     }
   }, [title, slugTouched, mode])
 
-  const categorySuggestions = useMemo(() => {
-    const set = new Set(categories.map((c) => c.trim()).filter(Boolean))
-    if (category.trim()) set.add(category.trim())
-    return Array.from(set).sort((a, b) => a.localeCompare(b))
-  }, [categories, category])
+  const values = { title, slug, excerpt, category, thumbnail, readTime }
+  const errors: FieldErrors = submitted ? validate(values) : {}
+
+  const otherCategories = useMemo(
+    () =>
+      Array.from(new Set(categories.map((c) => c.trim()).filter(Boolean))).sort(
+        (a, b) => a.localeCompare(b)
+      ),
+    [categories]
+  )
+
+  const suggestedReadTime = readTimeFromWords(wordCount)
 
   function handleWordCount(words: number) {
-    if (readTimeTouched) return
-    if (words === 0) {
-      setReadTime("")
-      return
-    }
-    const minutes = Math.max(1, Math.ceil(words / 200))
-    setReadTime(`${minutes} min read`)
+    setWordCount(words)
+    if (!readTimeTouched) setReadTime(readTimeFromWords(words))
   }
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
-    setError(null)
+    setServerError(null)
+    setSubmitted(true)
+
+    const nextErrors = validate(values)
+    const firstInvalid = Object.keys(nextErrors)[0] as FieldName | undefined
+    if (firstInvalid) {
+      document.getElementById(`news-${firstInvalid}`)?.focus()
+      return
+    }
 
     const payload = {
       title: title.trim(),
@@ -99,7 +147,7 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
           : await createNewsArticle(payload)
 
       if (!result.success) {
-        setError(result.error)
+        setServerError(result.error)
         return
       }
 
@@ -108,159 +156,268 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
     })
   }
 
+  const errorCount = Object.keys(errors).length
+  const isFuture = publishedAt.getTime() > Date.now()
+
   return (
-    <form onSubmit={handleSubmit} className="grid w-full min-w-0 gap-8">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[#d9e1d8] pb-5">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-[#315e13]">Newsroom</p>
-          <h1 className="mt-1 font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl font-semibold tracking-[-0.02em] text-[#1b241d]">
-            {mode === "edit" ? "Edit article" : "New article"}
-          </h1>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={pending}
-            className="border-[#d9e1d8] bg-[#fbfcfb] text-[#1b241d]"
-            onClick={() => router.push("/staff/news")}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={pending || !thumbnail}
-            className="bg-[#7fcc2f] text-[#1b241d] hover:bg-[#6fb828]"
-          >
-            {pending
-              ? "Saving…"
-              : mode === "edit"
-                ? "Save changes"
-                : "Publish article"}
-          </Button>
-        </div>
-      </div>
-
-      <div className="grid min-w-0 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="grid min-w-0 gap-6">
-          <FormField label="Title" htmlFor="news-title" hint={`${title.length}/200 characters`}>
-            <Input
-              id="news-title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-              maxLength={200}
-              className={controlClass}
-            />
-          </FormField>
-
-          <FormField
-            label="URL slug"
-            htmlFor="news-slug"
-            hint="Lowercase letters, numbers, and hyphens. On edit, the public URL stays put until you change this."
-          >
-            <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
-              <span className="text-sm text-[#566159]">/news/</span>
-              <Input
-                id="news-slug"
-                value={slug}
-                onChange={(e) => {
-                  setSlugTouched(true)
-                  setSlug(e.target.value)
-                }}
-                required
-                pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-                className={controlClass}
-              />
+    <form
+      noValidate
+      onSubmit={handleSubmit}
+      className="grid w-full items-start gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem] xl:gap-8"
+    >
+      {/* Writing column */}
+      <div className="flex min-w-0 flex-col gap-6">
+        <section
+          aria-label="Headline and summary"
+          className="flex flex-col gap-5 rounded-xl bg-card p-5 ring-1 ring-border md:p-7"
+        >
+          <div className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between gap-3">
+              <Label htmlFor="news-title">Headline</Label>
+              <span
+                className={cn(
+                  "text-xs tabular-nums text-muted-foreground",
+                  title.length > TITLE_MAX - 20 && "text-foreground"
+                )}
+              >
+                {title.length}/{TITLE_MAX}
+              </span>
             </div>
-          </FormField>
+            <Textarea
+              id="news-title"
+              rows={1}
+              value={title}
+              maxLength={TITLE_MAX}
+              placeholder="What happened, and who made it happen?"
+              aria-invalid={Boolean(errors.title)}
+              aria-describedby={errors.title ? "news-title-error" : undefined}
+              onChange={(e) => setTitle(e.target.value.replace(/\n/g, " "))}
+              onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+              className="min-h-0 resize-none border-0 bg-transparent px-0 py-1 font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl leading-tight font-bold tracking-[-0.02em] shadow-none focus-visible:ring-0 md:text-[1.75rem]"
+            />
+            <FieldMessage id="news-title-error" error={errors.title} />
+          </div>
 
-          <FormField
-            label="Excerpt"
-            htmlFor="news-excerpt"
-            hint={`${excerpt.length}/500 characters. At least 20.`}
-          >
+          <div className="h-px bg-border" aria-hidden />
+
+          <div className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between gap-3">
+              <Label htmlFor="news-excerpt">Summary</Label>
+              <span
+                className={cn(
+                  "text-xs tabular-nums text-muted-foreground",
+                  excerpt.trim().length > 0 &&
+                    excerpt.trim().length < EXCERPT_MIN &&
+                    "text-foreground"
+                )}
+              >
+                {excerpt.length}/{EXCERPT_MAX}
+              </span>
+            </div>
             <Textarea
               id="news-excerpt"
+              rows={3}
               value={excerpt}
+              maxLength={EXCERPT_MAX}
+              placeholder="One or two sentences shown on newsroom cards and in search results."
+              aria-invalid={Boolean(errors.excerpt)}
+              aria-describedby={
+                errors.excerpt ? "news-excerpt-error" : "news-excerpt-hint"
+              }
               onChange={(e) => setExcerpt(e.target.value)}
-              required
-              rows={5}
-              maxLength={500}
-              className={cn(controlClass, "field-sizing-fixed min-h-32 resize-y")}
+              className="min-h-20 resize-none border-0 bg-transparent px-0 py-1 text-base leading-relaxed text-muted-foreground shadow-none focus-visible:text-foreground focus-visible:ring-0 md:text-base"
             />
-          </FormField>
+            {errors.excerpt ? (
+              <FieldMessage id="news-excerpt-error" error={errors.excerpt} />
+            ) : (
+              <p id="news-excerpt-hint" className="sr-only">
+                Between {EXCERPT_MIN} and {EXCERPT_MAX} characters.
+              </p>
+            )}
+          </div>
+        </section>
 
-          <FormField label="Article body">
-            <RichTextEditor
-              value={content}
-              onChange={setContent}
-              onWordCountChange={handleWordCount}
-            />
-          </FormField>
-        </div>
+        <section aria-labelledby="news-body-label" className="flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-3 px-1">
+            <Label id="news-body-label" htmlFor="news-body">
+              Article body
+            </Label>
+            <span className="text-xs tabular-nums text-muted-foreground">
+              {wordCount.toLocaleString()} {wordCount === 1 ? "word" : "words"}
+            </span>
+          </div>
+          <RichTextEditor
+            id="news-body"
+            value={content}
+            onChange={setContent}
+            onWordCountChange={handleWordCount}
+          />
+        </section>
+      </div>
 
-        <aside className="grid min-w-0 content-start gap-5 xl:sticky xl:top-6">
-          <FormField label="Thumbnail">
-            {thumbnail ? (
-              <div className="mb-3 aspect-[16/10] overflow-hidden rounded-xl bg-[#e8ece8] ring-1 ring-[#1b241d]/8">
-                <RemoteThumbnail
-                  src={thumbnail}
-                  alt="Article thumbnail preview"
-                  className="size-full object-cover"
+      {/* Settings column */}
+      <aside
+        aria-label="Publishing settings"
+        className="flex flex-col rounded-xl bg-card ring-1 ring-border lg:sticky lg:top-16 lg:max-h-[calc(100svh-5rem)] lg:overflow-y-auto"
+      >
+        <PanelSection title="Publish">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="news-published">Publish date</Label>
+            <Popover open={dateOpen} onOpenChange={setDateOpen}>
+              <PopoverTrigger
+                render={
+                  <Button
+                    id="news-published"
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-full justify-start rounded-lg font-normal"
+                  >
+                    <CalendarBlank className="size-4 text-muted-foreground" />
+                    {format(publishedAt, "d MMMM yyyy")}
+                  </Button>
+                }
+              />
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={publishedAt}
+                  defaultMonth={publishedAt}
+                  onSelect={(date) => {
+                    if (!date) return
+                    setPublishedAt(date)
+                    setDateOpen(false)
+                  }}
                 />
-              </div>
+              </PopoverContent>
+            </Popover>
+            {isFuture ? (
+              <p className="text-xs text-muted-foreground">
+                Future dates still show the article straight away; the date is
+                only used for ordering and display.
+              </p>
             ) : null}
-            <UploadDropzone
-              endpoint="imageUploader"
-              onClientUploadComplete={(files) => {
-                const url = files[0]?.url
-                if (url) setThumbnail(url)
-              }}
-              onUploadError={(err) => setError(err.message)}
+          </div>
+
+          <div className="flex items-start justify-between gap-4 rounded-lg bg-muted/60 p-3">
+            <div className="flex flex-col gap-0.5">
+              <Label htmlFor="news-featured">Feature this story</Label>
+              <p id="news-featured-hint" className="text-xs text-muted-foreground">
+                Appears under the newsroom&apos;s Featured filter.
+              </p>
+            </div>
+            <Switch
+              id="news-featured"
+              checked={featured}
+              aria-describedby="news-featured-hint"
+              onCheckedChange={setFeatured}
+              className="mt-0.5"
             />
-            {thumbnail ? (
+          </div>
+
+          {serverError || (submitted && errorCount > 0) ? (
+            <div
+              role="alert"
+              className="flex gap-2 rounded-lg bg-destructive/8 p-3 text-sm text-destructive"
+            >
+              <WarningCircle className="mt-0.5 size-4 shrink-0" weight="fill" aria-hidden />
+              <span>
+                {serverError ??
+                  (errorCount === 1
+                    ? "One field needs attention before saving."
+                    : `${errorCount} fields need attention before saving.`)}
+              </span>
+            </div>
+          ) : null}
+
+          <div className="flex flex-col gap-2">
+            <Button
+              type="submit"
+              disabled={pending}
+              className="h-10 w-full rounded-lg font-semibold"
+            >
+              {pending
+                ? "Saving…"
+                : mode === "edit"
+                  ? "Save changes"
+                  : "Publish article"}
+            </Button>
+            <div className="flex gap-2">
               <Button
                 type="button"
-                variant="outline"
-                size="sm"
-                className="mt-2 border-[#d9e1d8] text-[#1b241d]"
-                onClick={() => setThumbnail("")}
+                variant="ghost"
+                disabled={pending}
+                className="h-9 flex-1 rounded-lg text-muted-foreground"
+                render={<Link href="/staff/news" />}
               >
-                Remove thumbnail
+                Cancel
               </Button>
-            ) : null}
-          </FormField>
+              {mode === "edit" && article?.slug ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-9 flex-1 rounded-lg text-muted-foreground"
+                  render={
+                    <Link
+                      href={`/news/${article.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    />
+                  }
+                >
+                  View live
+                  <ArrowSquareOut className="size-3.5" />
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        </PanelSection>
 
-          <FormField label="Category" htmlFor="news-category">
+        <PanelSection title="Cover image">
+          <ThumbnailField
+            id="news-thumbnail"
+            value={thumbnail}
+            onChange={setThumbnail}
+            invalid={Boolean(errors.thumbnail)}
+            describedBy={errors.thumbnail ? "news-thumbnail-error" : undefined}
+          />
+          <FieldMessage id="news-thumbnail-error" error={errors.thumbnail} />
+        </PanelSection>
+
+        <PanelSection title="Details">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="news-category">Category</Label>
             <Input
               id="news-category"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
               maxLength={50}
-              list="news-category-suggestions"
-              className={controlClass}
+              placeholder="e.g. Programme update"
+              list="news-category-options"
+              autoComplete="off"
+              aria-invalid={Boolean(errors.category)}
+              aria-describedby={errors.category ? "news-category-error" : undefined}
+              onChange={(e) => setCategory(e.target.value)}
+              className="h-10"
             />
-            <datalist id="news-category-suggestions">
-              {categorySuggestions.map((cat) => (
+            <datalist id="news-category-options">
+              {otherCategories.map((cat) => (
                 <option key={cat} value={cat} />
               ))}
             </datalist>
-            {categories.length > 0 ? (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {categories.map((cat) => {
-                  const selected = category.trim().toLowerCase() === cat.toLowerCase()
+            {otherCategories.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5" aria-label="Existing categories">
+                {otherCategories.map((cat) => {
+                  const selected = cat.toLowerCase() === category.trim().toLowerCase()
                   return (
                     <button
                       key={cat}
                       type="button"
+                      aria-pressed={selected}
                       onClick={() => setCategory(cat)}
                       className={cn(
-                        "rounded-full px-2.5 py-1 text-xs font-medium",
+                        "rounded-full px-2.5 py-1 text-xs ring-1 transition-colors duration-150 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
                         selected
-                          ? "bg-[#315e13] text-[#f4f7f2]"
-                          : "bg-[#e8ece8] text-[#1b241d] hover:bg-[#d7e4d8]"
+                          ? "bg-secondary font-medium text-secondary-foreground ring-ring/40"
+                          : "text-muted-foreground ring-border hover:bg-muted hover:text-foreground"
                       )}
                     >
                       {cat}
@@ -269,99 +426,122 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
                 })}
               </div>
             ) : null}
-          </FormField>
+            <FieldMessage id="news-category-error" error={errors.category} />
+          </div>
 
-          <FormField label="Published date">
-            <Popover>
-              <PopoverTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className={cn(
-                      controlClass,
-                      "justify-start font-normal hover:bg-[#f4f7f2]"
-                    )}
-                  >
-                    <CalendarBlank className="mr-2 size-4 text-[#315e13]" />
-                    {publishedAt ? format(publishedAt, "d MMMM yyyy") : "Pick a date"}
-                  </Button>
-                }
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="news-slug">URL</Label>
+            <div
+              className={cn(
+                "flex h-10 items-center overflow-hidden rounded-lg border border-input bg-transparent text-sm transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50",
+                errors.slug && "border-destructive focus-within:ring-destructive/20"
+              )}
+            >
+              <span className="flex h-full items-center bg-muted px-2.5 text-muted-foreground select-none">
+                /news/
+              </span>
+              <input
+                id="news-slug"
+                value={slug}
+                spellCheck={false}
+                autoComplete="off"
+                aria-invalid={Boolean(errors.slug)}
+                aria-describedby={errors.slug ? "news-slug-error" : "news-slug-hint"}
+                onChange={(e) => {
+                  setSlugTouched(true)
+                  setSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"))
+                }}
+                className="h-full min-w-0 flex-1 bg-transparent px-2.5 font-mono text-[0.8rem] outline-none"
               />
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={publishedAt}
-                  onSelect={(date) => date && setPublishedAt(date)}
-                />
-              </PopoverContent>
-            </Popover>
-          </FormField>
+            </div>
+            {errors.slug ? (
+              <FieldMessage id="news-slug-error" error={errors.slug} />
+            ) : (
+              <p id="news-slug-hint" className="text-xs text-muted-foreground">
+                {mode === "edit"
+                  ? "Changing this breaks links already shared."
+                  : slugTouched
+                    ? "Custom URL. Clear it to regenerate from the headline."
+                    : "Generated from the headline."}
+              </p>
+            )}
+            {mode === "create" && slugTouched ? (
+              <button
+                type="button"
+                onClick={() => {
+                  setSlugTouched(false)
+                  setSlug(slugifyTitle(title))
+                }}
+                className="w-fit text-xs text-muted-foreground underline underline-offset-3 hover:text-foreground"
+              >
+                Reset to headline
+              </button>
+            ) : null}
+          </div>
 
-          <FormField
-            label="Read time"
-            htmlFor="news-read-time"
-            hint="Suggested from the article length until you type your own."
-          >
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="news-readTime">Read time</Label>
             <Input
-              id="news-read-time"
+              id="news-readTime"
               value={readTime}
+              maxLength={30}
+              placeholder={suggestedReadTime || "e.g. 4 min read"}
+              aria-invalid={Boolean(errors.readTime)}
+              aria-describedby="news-readTime-hint"
               onChange={(e) => {
                 setReadTimeTouched(true)
                 setReadTime(e.target.value)
               }}
-              placeholder={estimateReadTime(content) || "4 min read"}
-              maxLength={30}
-              className={controlClass}
+              className="h-10"
             />
-          </FormField>
-
-          <div className="flex items-start gap-3 rounded-xl bg-[#eef3ec] px-3 py-3 ring-1 ring-[#d9e1d8]">
-            <Switch
-              id="news-featured"
-              checked={featured}
-              onCheckedChange={setFeatured}
-            />
-            <div className="min-w-0">
-              <Label htmlFor="news-featured" className="text-[#1b241d]">
-                Featured article
-              </Label>
-              <p className="mt-0.5 text-sm leading-5 text-[#566159]">
-                Shows in the newsroom featured filter.
+            {readTimeTouched && suggestedReadTime && readTime !== suggestedReadTime ? (
+              <button
+                id="news-readTime-hint"
+                type="button"
+                onClick={() => {
+                  setReadTimeTouched(false)
+                  setReadTime(suggestedReadTime)
+                }}
+                className="w-fit text-xs text-muted-foreground underline underline-offset-3 hover:text-foreground"
+              >
+                Use estimate ({suggestedReadTime})
+              </button>
+            ) : (
+              <p id="news-readTime-hint" className="text-xs text-muted-foreground">
+                Estimated from the article length.
               </p>
-            </div>
+            )}
+            <FieldMessage id="news-readTime-error" error={errors.readTime} />
           </div>
-        </aside>
-      </div>
-
-      {error ? (
-        <p className="text-sm text-[#b42318]" role="alert">{error}</p>
-      ) : null}
+        </PanelSection>
+      </aside>
     </form>
   )
 }
 
-const controlClass =
-  "field-sizing-fixed! h-11 w-full min-w-0 rounded-lg border-[#d9e1d8] bg-[#fbfcfb] text-[#1b241d] shadow-none placeholder:text-[#918f8f] focus-visible:border-[#315e13] focus-visible:ring-[#315e13]/25"
-
-function FormField({
-  label,
-  htmlFor,
-  hint,
+function PanelSection({
+  title,
   children,
 }: {
-  label: string
-  htmlFor?: string
-  hint?: string
+  title: string
   children: React.ReactNode
 }) {
   return (
-    <div className="grid min-w-0 gap-1.5">
-      <Label htmlFor={htmlFor} className="text-sm font-medium text-[#1b241d]">
-        {label}
-      </Label>
+    <section className="flex flex-col gap-4 border-b p-5 last:border-b-0">
+      <h2 className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+        {title}
+      </h2>
       {children}
-      {hint ? <p className="text-sm leading-5 text-[#566159]">{hint}</p> : null}
-    </div>
+    </section>
+  )
+}
+
+function FieldMessage({ id, error }: { id: string; error?: string }) {
+  if (!error) return null
+  return (
+    <p id={id} className="flex items-center gap-1.5 text-sm text-destructive">
+      <WarningCircle className="size-4 shrink-0" weight="fill" aria-hidden />
+      {error}
+    </p>
   )
 }

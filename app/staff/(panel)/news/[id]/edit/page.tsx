@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { getNewsArticle, listNewsCategories } from "@/lib/actions/news"
 import { NewsForm } from "@/components/staff/news-form"
+import { StaffPageHeader } from "@/components/staff/staff-page-header"
 
 interface StaffEditNewsPageProps {
   params: Promise<{ id: string }>
@@ -38,10 +39,16 @@ export default async function StaffEditNewsPage({
       : []
 
   return (
-    <NewsForm
-      mode="edit"
-      article={articleResult.data}
-      categories={categories}
-    />
+    <>
+      <StaffPageHeader
+        title="Edit article"
+        back={{ href: "/staff/news", label: "All news" }}
+      />
+      <NewsForm
+        mode="edit"
+        article={articleResult.data}
+        categories={categories}
+      />
+    </>
   )
 }

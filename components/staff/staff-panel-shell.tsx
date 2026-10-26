@@ -1,12 +1,14 @@
 "use client"
 
+import Link from "next/link"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { StaffSidebar } from "@/components/staff/staff-sidebar"
-import { Separator } from "@/components/ui/separator"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { ArrowUpRight } from "@phosphor-icons/react"
 
 interface StaffPanelShellProps {
   user: {
@@ -18,31 +20,27 @@ interface StaffPanelShellProps {
 
 export function StaffPanelShell({ user, children }: StaffPanelShellProps) {
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar": "#eef3ec",
-          "--sidebar-foreground": "#1b241d",
-          "--sidebar-accent": "#d7e4d8",
-          "--sidebar-accent-foreground": "#1b241d",
-          "--sidebar-border": "#d9e1d8",
-          "--sidebar-primary": "#315e13",
-          "--sidebar-primary-foreground": "#f4f7f2",
-          "--sidebar-ring": "#315e13",
-        } as React.CSSProperties
-      }
-    >
+    <TooltipProvider delay={400}>
+    <SidebarProvider data-staff-theme="">
       <StaffSidebar user={user} />
-      <SidebarInset className="min-h-svh bg-[#f4f7f2] text-[#1b241d]">
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-[#d9e1d8] bg-[#f7faf6] px-4 md:px-6">
-          <SidebarTrigger className="text-[#1b241d]" />
-          <Separator orientation="vertical" className="h-4 bg-[#d9e1d8]" />
-          <span className="text-sm text-[#566159]">Staff workspace</span>
+      <SidebarInset className="min-h-svh bg-background">
+        <header className="sticky top-0 z-20 flex h-12 shrink-0 items-center justify-between gap-2 border-b bg-background/95 px-3 backdrop-blur-sm md:px-6">
+          <SidebarTrigger className="-ml-1" />
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+          >
+            View website
+            <ArrowUpRight className="size-3.5" aria-hidden />
+          </Link>
         </header>
-        <div className="flex w-full min-w-0 flex-1 flex-col px-4 py-6 md:px-8 md:py-8">
+        <div className="mx-auto flex w-full max-w-[90rem] flex-1 flex-col px-4 py-6 md:px-8 md:py-8">
           {children}
         </div>
       </SidebarInset>
     </SidebarProvider>
+    </TooltipProvider>
   )
 }

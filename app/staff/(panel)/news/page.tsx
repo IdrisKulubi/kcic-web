@@ -7,6 +7,7 @@ import { NewsFilters } from "@/components/staff/news-filters"
 import { NewsFeaturedSwitch } from "@/components/staff/news-featured-switch"
 import { NewsDeleteButton } from "@/components/staff/news-delete-button"
 import { RemoteThumbnail } from "@/components/remote-thumbnail"
+import { StaffPageHeader } from "@/components/staff/staff-page-header"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -68,40 +69,42 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
     return query ? `/staff/news?${query}` : "/staff/news"
   }
 
+  const isFiltered = Boolean(search || category)
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl font-semibold tracking-[-0.02em] text-[#1b241d]">
-            News
-          </h1>
-          <p className="text-sm text-[#566159]">
-            Create and manage newsroom articles.
-          </p>
-        </div>
-        <Button
-          className="bg-[#7fcc2f] text-[#1b241d] hover:bg-[#6fb828]"
-          render={<Link href="/staff/news/new" />}
-        >
-          <Plus className="size-4" />
-          New article
-        </Button>
-      </div>
+      <StaffPageHeader
+        title="News"
+        description={`${total.toLocaleString()} ${total === 1 ? "article" : "articles"} ${isFiltered ? "match these filters" : "in the newsroom"}.`}
+        actions={
+          <Button
+            className="h-10 rounded-lg px-4 font-semibold"
+            render={<Link href="/staff/news/new" />}
+          >
+            <Plus className="size-4" weight="bold" />
+            New article
+          </Button>
+        }
+      />
 
       <Suspense fallback={null}>
         <NewsFilters categories={categories} />
       </Suspense>
 
       {listError ? (
-        <p className="text-sm text-destructive" role="alert">{listError}</p>
+        <p className="rounded-lg bg-destructive/8 p-3 text-sm text-destructive" role="alert">
+          Articles could not be loaded: {listError}
+        </p>
       ) : null}
 
-      <div className="overflow-hidden rounded-xl border border-[#d9e1d8] bg-[#fbfcfb]">
+      <div className="overflow-hidden rounded-xl bg-card ring-1 ring-border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[72px]">Image</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead className="w-[76px] pl-4">
+                <span className="sr-only">Cover image</span>
+              </TableHead>
+              <TableHead>Article</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Published</TableHead>
               <TableHead>Featured</TableHead>
@@ -110,9 +113,26 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
           </TableHeader>
           <TableBody>
             {articles.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                  No articles match your filters.
+              <TableRow className="hover:bg-transparent">
+                <TableCell colSpan={6} className="py-16 text-center">
+                  <p className="font-medium">
+                    {isFiltered ? "No articles match these filters" : "No articles yet"}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {isFiltered ? (
+                      <Link href="/staff/news" className="underline underline-offset-3 hover:text-foreground">
+                        Clear filters
+                      </Link>
+                    ) : (
+                      <>
+                        Your first story will appear on the newsroom as soon as you{" "}
+                        <Link href="/staff/news/new" className="underline underline-offset-3 hover:text-foreground">
+                          publish it
+                        </Link>
+                        .
+                      </>
+                    )}
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -124,8 +144,8 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
 
                 return (
                   <TableRow key={article.id}>
-                    <TableCell>
-                      <div className="size-12 overflow-hidden rounded-md bg-muted">
+                    <TableCell className="py-3 pl-4">
+                      <div className="aspect-[4/3] w-14 overflow-hidden rounded-md bg-muted ring-1 ring-border">
                         <RemoteThumbnail
                           src={article.thumbnail}
                           alt=""
@@ -133,10 +153,22 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
                         />
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[240px] font-medium">
-                      <span className="line-clamp-2">{article.title}</span>
+                    <TableCell className="max-w-[28rem] py-3 whitespace-normal">
+                      <Link
+                        href={`/staff/news/${article.id}/edit`}
+                        className="line-clamp-2 font-medium hover:underline hover:underline-offset-3 focus-visible:underline focus-visible:outline-none"
+                      >
+                        {article.title}
+                      </Link>
+                      <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+                        {article.excerpt}
+                      </p>
                     </TableCell>
-                    <TableCell>{article.category}</TableCell>
+                    <TableCell>
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                        {article.category}
+                      </span>
+                    </TableCell>
                     <TableCell className="text-muted-foreground">
                       {formatNewsDate(published)}
                     </TableCell>

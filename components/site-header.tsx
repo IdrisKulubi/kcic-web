@@ -407,20 +407,7 @@ export function SiteHeader() {
                 </li>
               )
             })}
-            <li>
-              <Link
-                href="/faqs"
-                prefetch={false}
-                onClick={close}
-                className={cn(
-                  "flex min-h-9 items-center rounded-full px-2 text-[13px] font-medium no-underline transition-colors duration-150 hover:bg-[#f0f7e9] hover:text-[#315e13] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#315e13] max-[1050px]:min-h-12 max-[1050px]:w-full max-[1050px]:px-3 max-[1050px]:text-[15px]",
-                  pathname === "/faqs" && "bg-[#f0f7e9] text-[#315e13]"
-                )}
-                aria-current={pathname === "/faqs" ? "page" : undefined}
-              >
-                FAQs
-              </Link>
-            </li>
+           
           </ul>
           <Link
             href="/contact"

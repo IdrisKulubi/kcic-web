@@ -72,12 +72,17 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">News</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl font-semibold tracking-[-0.02em] text-[#1b241d]">
+            News
+          </h1>
+          <p className="text-sm text-[#566159]">
             Create and manage newsroom articles.
           </p>
         </div>
-        <Button render={<Link href="/staff/news/new" />}>
+        <Button
+          className="bg-[#7fcc2f] text-[#1b241d] hover:bg-[#6fb828]"
+          render={<Link href="/staff/news/new" />}
+        >
           <Plus className="size-4" />
           New article
         </Button>
@@ -91,7 +96,7 @@ export default async function StaffNewsPage({ searchParams }: StaffNewsPageProps
         <p className="text-sm text-destructive" role="alert">{listError}</p>
       ) : null}
 
-      <div className="overflow-hidden rounded-lg border bg-background">
+      <div className="overflow-hidden rounded-xl border border-[#d9e1d8] bg-[#fbfcfb]">
         <Table>
           <TableHeader>
             <TableRow>

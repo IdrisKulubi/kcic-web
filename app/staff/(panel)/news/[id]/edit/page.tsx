@@ -38,18 +38,10 @@ export default async function StaffEditNewsPage({
       : []
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Edit article</h1>
-        <p className="text-sm text-muted-foreground">
-          Update “{articleResult.data.title}”.
-        </p>
-      </div>
-      <NewsForm
-        mode="edit"
-        article={articleResult.data}
-        categories={categories}
-      />
-    </div>
+    <NewsForm
+      mode="edit"
+      article={articleResult.data}
+      categories={categories}
+    />
   )
 }

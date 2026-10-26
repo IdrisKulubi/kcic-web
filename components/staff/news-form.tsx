@@ -17,13 +17,6 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
@@ -116,118 +109,169 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex max-w-3xl flex-col gap-6">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor="news-title">Title</FieldLabel>
-          <Input
-            id="news-title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            maxLength={200}
-          />
-          <FieldDescription>{title.length}/200 characters</FieldDescription>
-        </Field>
+    <form onSubmit={handleSubmit} className="grid w-full min-w-0 gap-8">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-[#d9e1d8] pb-5">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-[#315e13]">Newsroom</p>
+          <h1 className="mt-1 font-['Gotham','Century_Gothic',Arial,sans-serif] text-2xl font-semibold tracking-[-0.02em] text-[#1b241d]">
+            {mode === "edit" ? "Edit article" : "New article"}
+          </h1>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            disabled={pending}
+            className="border-[#d9e1d8] bg-[#fbfcfb] text-[#1b241d]"
+            onClick={() => router.push("/staff/news")}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={pending || !thumbnail}
+            className="bg-[#7fcc2f] text-[#1b241d] hover:bg-[#6fb828]"
+          >
+            {pending
+              ? "Saving…"
+              : mode === "edit"
+                ? "Save changes"
+                : "Publish article"}
+          </Button>
+        </div>
+      </div>
 
-        <Field>
-          <FieldLabel htmlFor="news-slug">URL slug</FieldLabel>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">/news/</span>
+      <div className="grid min-w-0 items-start gap-8 xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="grid min-w-0 gap-6">
+          <FormField label="Title" htmlFor="news-title" hint={`${title.length}/200 characters`}>
             <Input
-              id="news-slug"
-              value={slug}
-              onChange={(e) => {
-                setSlugTouched(true)
-                setSlug(e.target.value)
-              }}
+              id="news-title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
-              pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+              maxLength={200}
+              className={controlClass}
             />
-          </div>
-          <FieldDescription>
-            Lowercase letters, numbers, and hyphens only. Leave auto-generated on
-            create unless you need a custom URL.
-          </FieldDescription>
-        </Field>
+          </FormField>
 
-        <Field>
-          <FieldLabel htmlFor="news-excerpt">Excerpt</FieldLabel>
-          <Textarea
-            id="news-excerpt"
-            value={excerpt}
-            onChange={(e) => setExcerpt(e.target.value)}
-            required
-            rows={3}
-            maxLength={500}
-          />
-          <FieldDescription>{excerpt.length}/500 characters (min 20)</FieldDescription>
-        </Field>
-
-        <Field>
-          <FieldLabel htmlFor="news-category">Category</FieldLabel>
-          <Input
-            id="news-category"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-            maxLength={50}
-            list="news-category-suggestions"
-          />
-          <datalist id="news-category-suggestions">
-            {categorySuggestions.map((cat) => (
-              <option key={cat} value={cat} />
-            ))}
-          </datalist>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {categories.map((cat) => (
-              <Badge
-                key={cat}
-                variant="outline"
-                className="cursor-pointer"
-                onClick={() => setCategory(cat)}
-              >
-                {cat}
-              </Badge>
-            ))}
-          </div>
-        </Field>
-
-        <Field>
-          <FieldLabel>Thumbnail</FieldLabel>
-          {thumbnail ? (
-            <div className="relative mb-3 aspect-[16/10] max-w-md overflow-hidden rounded-lg border bg-muted">
-              <RemoteThumbnail
-                src={thumbnail}
-                alt="Article thumbnail preview"
-                className="size-full object-cover"
+          <FormField
+            label="URL slug"
+            htmlFor="news-slug"
+            hint="Lowercase letters, numbers, and hyphens. On edit, the public URL stays put until you change this."
+          >
+            <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2">
+              <span className="text-sm text-[#566159]">/news/</span>
+              <Input
+                id="news-slug"
+                value={slug}
+                onChange={(e) => {
+                  setSlugTouched(true)
+                  setSlug(e.target.value)
+                }}
+                required
+                pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                className={controlClass}
               />
             </div>
-          ) : null}
-          <UploadDropzone
-            endpoint="imageUploader"
-            onClientUploadComplete={(files) => {
-              const url = files[0]?.url
-              if (url) setThumbnail(url)
-            }}
-            onUploadError={(err) => setError(err.message)}
-          />
-          {thumbnail ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="mt-2"
-              onClick={() => setThumbnail("")}
-            >
-              Remove thumbnail
-            </Button>
-          ) : null}
-        </Field>
+          </FormField>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field>
-            <FieldLabel>Published date</FieldLabel>
+          <FormField
+            label="Excerpt"
+            htmlFor="news-excerpt"
+            hint={`${excerpt.length}/500 characters. At least 20.`}
+          >
+            <Textarea
+              id="news-excerpt"
+              value={excerpt}
+              onChange={(e) => setExcerpt(e.target.value)}
+              required
+              rows={5}
+              maxLength={500}
+              className={cn(controlClass, "field-sizing-fixed min-h-32 resize-y")}
+            />
+          </FormField>
+
+          <FormField label="Article body">
+            <RichTextEditor
+              value={content}
+              onChange={setContent}
+              onWordCountChange={handleWordCount}
+            />
+          </FormField>
+        </div>
+
+        <aside className="grid min-w-0 content-start gap-5 xl:sticky xl:top-6">
+          <FormField label="Thumbnail">
+            {thumbnail ? (
+              <div className="mb-3 aspect-[16/10] overflow-hidden rounded-xl bg-[#e8ece8] ring-1 ring-[#1b241d]/8">
+                <RemoteThumbnail
+                  src={thumbnail}
+                  alt="Article thumbnail preview"
+                  className="size-full object-cover"
+                />
+              </div>
+            ) : null}
+            <UploadDropzone
+              endpoint="imageUploader"
+              onClientUploadComplete={(files) => {
+                const url = files[0]?.url
+                if (url) setThumbnail(url)
+              }}
+              onUploadError={(err) => setError(err.message)}
+            />
+            {thumbnail ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2 border-[#d9e1d8] text-[#1b241d]"
+                onClick={() => setThumbnail("")}
+              >
+                Remove thumbnail
+              </Button>
+            ) : null}
+          </FormField>
+
+          <FormField label="Category" htmlFor="news-category">
+            <Input
+              id="news-category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              required
+              maxLength={50}
+              list="news-category-suggestions"
+              className={controlClass}
+            />
+            <datalist id="news-category-suggestions">
+              {categorySuggestions.map((cat) => (
+                <option key={cat} value={cat} />
+              ))}
+            </datalist>
+            {categories.length > 0 ? (
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {categories.map((cat) => {
+                  const selected = category.trim().toLowerCase() === cat.toLowerCase()
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => setCategory(cat)}
+                      className={cn(
+                        "rounded-full px-2.5 py-1 text-xs font-medium",
+                        selected
+                          ? "bg-[#315e13] text-[#f4f7f2]"
+                          : "bg-[#e8ece8] text-[#1b241d] hover:bg-[#d7e4d8]"
+                      )}
+                    >
+                      {cat}
+                    </button>
+                  )
+                })}
+              </div>
+            ) : null}
+          </FormField>
+
+          <FormField label="Published date">
             <Popover>
               <PopoverTrigger
                 render={
@@ -235,12 +279,12 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
                     type="button"
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !publishedAt && "text-muted-foreground"
+                      controlClass,
+                      "justify-start font-normal hover:bg-[#f4f7f2]"
                     )}
                   >
-                    <CalendarBlank className="mr-2 size-4" />
-                    {publishedAt ? format(publishedAt, "PPP") : "Pick a date"}
+                    <CalendarBlank className="mr-2 size-4 text-[#315e13]" />
+                    {publishedAt ? format(publishedAt, "d MMMM yyyy") : "Pick a date"}
                   </Button>
                 }
               />
@@ -252,10 +296,13 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
                 />
               </PopoverContent>
             </Popover>
-          </Field>
+          </FormField>
 
-          <Field>
-            <FieldLabel htmlFor="news-read-time">Read time</FieldLabel>
+          <FormField
+            label="Read time"
+            htmlFor="news-read-time"
+            hint="Suggested from the article length until you type your own."
+          >
             <Input
               id="news-read-time"
               value={readTime}
@@ -263,60 +310,58 @@ export function NewsForm({ mode, article, categories }: NewsFormProps) {
                 setReadTimeTouched(true)
                 setReadTime(e.target.value)
               }}
-              placeholder={estimateReadTime(content) || "e.g. 4 min read"}
+              placeholder={estimateReadTime(content) || "4 min read"}
               maxLength={30}
+              className={controlClass}
             />
-            <FieldDescription>
-              Auto-suggested from word count until you edit this field.
-            </FieldDescription>
-          </Field>
-        </div>
+          </FormField>
 
-        <Field orientation="horizontal">
-          <Switch
-            id="news-featured"
-            checked={featured}
-            onCheckedChange={setFeatured}
-          />
-          <div className="space-y-0.5">
-            <Label htmlFor="news-featured">Featured article</Label>
-            <FieldDescription>
-              Featured stories are highlighted in the newsroom filters.
-            </FieldDescription>
+          <div className="flex items-start gap-3 rounded-xl bg-[#eef3ec] px-3 py-3 ring-1 ring-[#d9e1d8]">
+            <Switch
+              id="news-featured"
+              checked={featured}
+              onCheckedChange={setFeatured}
+            />
+            <div className="min-w-0">
+              <Label htmlFor="news-featured" className="text-[#1b241d]">
+                Featured article
+              </Label>
+              <p className="mt-0.5 text-sm leading-5 text-[#566159]">
+                Shows in the newsroom featured filter.
+              </p>
+            </div>
           </div>
-        </Field>
-
-        <Field>
-          <FieldLabel>Article body</FieldLabel>
-          <RichTextEditor
-            value={content}
-            onChange={setContent}
-            onWordCountChange={handleWordCount}
-          />
-        </Field>
-      </FieldGroup>
+        </aside>
+      </div>
 
       {error ? (
-        <p className="text-sm text-destructive" role="alert">{error}</p>
+        <p className="text-sm text-[#b42318]" role="alert">{error}</p>
       ) : null}
-
-      <div className="flex flex-wrap gap-3">
-        <Button type="submit" disabled={pending || !thumbnail}>
-          {pending
-            ? "Saving…"
-            : mode === "edit"
-              ? "Save changes"
-              : "Publish article"}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          disabled={pending}
-          onClick={() => router.push("/staff/news")}
-        >
-          Cancel
-        </Button>
-      </div>
     </form>
+  )
+}
+
+const controlClass =
+  "field-sizing-fixed! h-11 w-full min-w-0 rounded-lg border-[#d9e1d8] bg-[#fbfcfb] text-[#1b241d] shadow-none placeholder:text-[#918f8f] focus-visible:border-[#315e13] focus-visible:ring-[#315e13]/25"
+
+function FormField({
+  label,
+  htmlFor,
+  hint,
+  children,
+}: {
+  label: string
+  htmlFor?: string
+  hint?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="grid min-w-0 gap-1.5">
+      <Label htmlFor={htmlFor} className="text-sm font-medium text-[#1b241d]">
+        {label}
+      </Label>
+      {children}
+      {hint ? <p className="text-sm leading-5 text-[#566159]">{hint}</p> : null}
+    </div>
   )
 }

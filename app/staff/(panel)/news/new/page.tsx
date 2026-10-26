@@ -13,15 +13,5 @@ export default async function StaffNewNewsPage() {
       ? categoriesResult.data
       : []
 
-  return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">New article</h1>
-        <p className="text-sm text-muted-foreground">
-          Add a new story to the newsroom.
-        </p>
-      </div>
-      <NewsForm mode="create" categories={categories} />
-    </div>
-  )
+  return <NewsForm mode="create" categories={categories} />
 }

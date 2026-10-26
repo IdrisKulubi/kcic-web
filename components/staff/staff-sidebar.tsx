@@ -51,8 +51,10 @@ export function StaffSidebar({ user }: StaffSidebarProps) {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
         <div className="flex flex-col gap-0.5 group-data-[collapsible=icon]:hidden">
-          <span className="text-sm font-semibold tracking-tight">KCIC Staff</span>
-          <span className="text-xs text-muted-foreground">Content management</span>
+          <span className="text-sm font-semibold tracking-[-0.02em] text-[#1b241d]">
+            KCIC Staff
+          </span>
+          <span className="text-xs text-[#566159]">Content</span>
         </div>
       </SidebarHeader>
       <SidebarContent>

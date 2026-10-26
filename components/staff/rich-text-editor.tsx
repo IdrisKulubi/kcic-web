@@ -52,6 +52,7 @@ export function RichTextEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [2, 3] },
+        link: false,
       }),
       Link.configure({
         openOnClick: false,
@@ -73,7 +74,7 @@ export function RichTextEditor({
       attributes: {
         class: cn(
           newsArticleBodyClassName,
-          "min-h-[280px] rounded-b-lg border-0 bg-background px-4 py-3 focus:outline-none"
+          "min-h-[22rem] rounded-b-xl bg-[#fbfcfb] px-4 py-4 text-[#1b241d] focus:outline-none"
         ),
       },
     },
@@ -125,15 +126,15 @@ export function RichTextEditor({
 
   if (!editor) {
     return (
-      <div className="rounded-lg border bg-muted/30 p-8 text-sm text-muted-foreground">
+      <div className="rounded-xl border border-[#d9e1d8] bg-[#f4f7f2] p-8 text-sm text-[#566159]">
         Loading editor…
       </div>
     )
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border bg-background">
-      <div className="flex flex-wrap gap-1 border-b bg-muted/40 p-2">
+    <div className="overflow-hidden rounded-xl border border-[#d9e1d8] bg-[#fbfcfb]">
+      <div className="flex flex-wrap gap-1 border-b border-[#d9e1d8] bg-[#f4f7f2] p-2">
         <ToolbarButton
           label="Heading 2"
           pressed={editor.isActive("heading", { level: 2 })}

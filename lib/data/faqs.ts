@@ -113,9 +113,9 @@ export const faqItems: FaqItem[] = [
   {
     id: "where-to-apply",
     topicId: "applying",
-    question: "Where do I apply for an open programme?",
+    question: "Where do I apply for an active programme?",
     answer: [
-      "Open programmes show an Apply action on the programme page when applications are active. Each programme lists eligibility, process, and the correct application link.",
+      "Active programmes show an Apply action on the programme page when applications are open. Each programme lists eligibility, process, and the correct application link.",
       { text: "Find programmes", href: "/programmes" },
     ],
   },

@@ -181,7 +181,7 @@ const groups: { title: string; items: NavItem[] }[] = [
     ],
   },
   {
-    title: "Knowledge hub",
+    title: "Knowledge Hub",
     items: [
       {
         title: "Impact reports",
@@ -263,8 +263,8 @@ export function SiteHeader({ openProgrammesCount }: SiteHeaderProps) {
       groups.map((group) => {
         if (group.title !== "Our programmes") return group
         const openItem: NavItem = {
-          title: "Open programmes",
-          description: "Active programmes you can explore or apply to",
+          title: "Active programmes",
+          description: "Programmes you can explore or apply to today",
           href: "/programmes#open",
           icon: Target,
           badge: openProgrammesCount,
@@ -471,7 +471,7 @@ export function SiteHeader({ openProgrammesCount }: SiteHeaderProps) {
                                   {badge !== undefined ? (
                                     <span
                                       className="inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-[#7fcc2f] px-1.5 text-[10px] font-semibold tabular-nums text-[#1b241d]"
-                                      aria-label={`${badge} open ${badge === 1 ? "programme" : "programmes"}`}
+                                      aria-label={`${badge} active ${badge === 1 ? "programme" : "programmes"}`}
                                     >
                                       {badge}
                                     </span>

@@ -233,6 +233,10 @@ export function SiteHeader() {
     }
   }, [])
 
+  if (pathname.startsWith("/staff")) {
+    return null
+  }
+
   return (
     <header
       ref={header}

@@ -5,9 +5,11 @@ import { news } from '@/db/schema';
 import { revalidatePath, updateTag } from 'next/cache';
 import { NEWS_CACHE_TAG } from '@/lib/cache-tags';
 import { z } from 'zod';
-import { eq, desc, like, or, and, count } from 'drizzle-orm/sql';
+import { eq, desc, ilike, or, and, count, asc } from 'drizzle-orm/sql';
 import { ensureLiveCmsData } from '@/lib/cms-live';
 import { newsSchema } from '@/lib/validators';
+import { requireStaff } from '@/lib/staff/session';
+import { sanitizeRichHtml } from '@/lib/sanitize-rich-html';
 
 export type NewsData = z.infer<typeof newsSchema>;
 
@@ -18,7 +20,7 @@ type ActionResponse<T = void> =
 function revalidateNewsPaths(slug?: string, previousSlug?: string) {
   updateTag(NEWS_CACHE_TAG);
   revalidatePath('/');
-  revalidatePath('/admin/news');
+  revalidatePath('/staff/news');
   revalidatePath('/newsroom');
   if (slug) {
     revalidatePath(`/news/${slug}`);
@@ -90,8 +92,8 @@ export async function listNews(options?: {
     if (options?.search) {
       conditions.push(
         or(
-          like(news.title, `%${options.search}%`),
-          like(news.excerpt, `%${options.search}%`)
+          ilike(news.title, `%${options.search}%`),
+          ilike(news.excerpt, `%${options.search}%`)
         )
       );
     }
@@ -146,8 +148,31 @@ export async function listNews(options?: {
 /**
  * Get a single news article by ID
  */
+export async function listNewsCategories(): Promise<ActionResponse<string[]>> {
+  try {
+    await requireStaff({ redirect: false })
+    const rows = await db
+      .selectDistinct({ category: news.category })
+      .from(news)
+      .orderBy(asc(news.category))
+
+    return {
+      success: true,
+      data: rows.map((row) => row.category).filter(Boolean),
+    }
+  } catch (error) {
+    console.error('Error fetching news categories:', error)
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Failed to fetch categories',
+    }
+  }
+}
+
 export async function getNewsArticle(id: string): Promise<ActionResponse<NewsData>> {
   try {
+    await requireStaff({ redirect: false })
     const article = await db.select().from(news).where(eq(news.id, id)).limit(1);
     if (article.length === 0) {
       return {
@@ -224,29 +249,32 @@ export async function getNewsArticleBySlug(slug: string): Promise<ActionResponse
 /**
  * Create a new news article
  */
-export async function createNewsArticle(data: Omit<NewsData, 'id' | 'slug'>): Promise<ActionResponse<string>> {
+export async function createNewsArticle(
+  data: Omit<NewsData, 'id'>
+): Promise<ActionResponse<string>> {
   try {
-    // Validate input
-    const validated = newsSchema.omit({ id: true, slug: true }).parse(data);
-    
-    // Generate slug from title
-    const baseSlug = generateSlug(validated.title);
-    const uniqueSlug = await ensureUniqueSlug(baseSlug);
+    await requireStaff({ redirect: false })
+    const validated = newsSchema.omit({ id: true }).parse(data)
+
+    const baseSlug = validated.slug?.trim()
+      ? validated.slug.trim()
+      : generateSlug(validated.title)
+    const uniqueSlug = await ensureUniqueSlug(baseSlug)
     
     // Generate unique ID
     const id = `news-${Date.now()}`;
     
     // Convert publishedAt to Date if it's a string
-    const publishedAt = typeof validated.publishedAt === 'string' 
-      ? new Date(validated.publishedAt) 
-      : validated.publishedAt;
-    
-    // Insert new article
+    const publishedAt = validated.publishedAt
+    const content = validated.content
+      ? sanitizeRichHtml(validated.content)
+      : null
+
     await db.insert(news).values({
       id,
       title: validated.title,
       excerpt: validated.excerpt,
-      content: validated.content || null,
+      content: content || null,
       thumbnail: validated.thumbnail,
       category: validated.category,
       slug: uniqueSlug,
@@ -285,7 +313,7 @@ export async function createNewsArticle(data: Omit<NewsData, 'id' | 'slug'>): Pr
  */
 export async function updateNewsArticle(id: string, data: Omit<NewsData, 'id'>): Promise<ActionResponse> {
   try {
-    // Validate input
+    await requireStaff({ redirect: false })
     const validated = newsSchema.omit({ id: true }).parse(data);
     
     // Check if article exists
@@ -297,24 +325,22 @@ export async function updateNewsArticle(id: string, data: Omit<NewsData, 'id'>):
       };
     }
     
-    // Generate new slug if title changed
-    let slug = validated.slug || existing[0].slug;
-    if (validated.title !== existing[0].title) {
-      const baseSlug = generateSlug(validated.title);
-      slug = await ensureUniqueSlug(baseSlug, id);
+    let slug = existing[0].slug
+    const requestedSlug = validated.slug?.trim()
+    if (requestedSlug && requestedSlug !== existing[0].slug) {
+      slug = await ensureUniqueSlug(requestedSlug, id)
     }
-    
-    // Convert publishedAt to Date if it's a string
-    const publishedAt = typeof validated.publishedAt === 'string' 
-      ? new Date(validated.publishedAt) 
-      : validated.publishedAt;
-    
-    // Update article
+
+    const publishedAt = validated.publishedAt
+    const content = validated.content
+      ? sanitizeRichHtml(validated.content)
+      : null
+
     await db.update(news)
       .set({
         title: validated.title,
         excerpt: validated.excerpt,
-        content: validated.content || null,
+        content: content || null,
         thumbnail: validated.thumbnail,
         category: validated.category,
         slug,
@@ -350,6 +376,7 @@ export async function updateNewsArticle(id: string, data: Omit<NewsData, 'id'>):
  */
 export async function deleteNewsArticle(id: string): Promise<ActionResponse> {
   try {
+    await requireStaff({ redirect: false })
     // Check if article exists
     const existing = await db.select().from(news).where(eq(news.id, id)).limit(1);
     if (existing.length === 0) {
@@ -380,6 +407,7 @@ export async function deleteNewsArticle(id: string): Promise<ActionResponse> {
  */
 export async function toggleFeaturedNews(id: string): Promise<ActionResponse> {
   try {
+    await requireStaff({ redirect: false })
     // Check if article exists
     const existing = await db.select().from(news).where(eq(news.id, id)).limit(1);
     if (existing.length === 0) {

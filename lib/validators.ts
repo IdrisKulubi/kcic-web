@@ -35,18 +35,54 @@ export const reorderStatisticsSchema = z.object({
   }))
 });
 
+const httpUrl = z
+  .string()
+  .url("Must be a valid URL")
+  .refine(
+    (value) => value.startsWith("http://") || value.startsWith("https://"),
+    "URL must use http or https"
+  )
+
+const newsSlugSchema = z
+  .string()
+  .max(120, "Slug must be at most 120 characters")
+  .regex(
+    /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+    "Slug must be lowercase letters, numbers, and hyphens only"
+  )
+
 export const newsSchema = z.object({
   id: z.string().optional(),
-  title: z.string().min(5, 'Title must be at least 5 characters').max(200, 'Title must be at most 200 characters'),
-  excerpt: z.string().min(20, 'Excerpt must be at least 20 characters').max(500, 'Excerpt must be at most 500 characters'),
-  content: z.string().min(50, 'Content must be at least 50 characters').optional().or(z.literal('')),
-  thumbnail: z.string().url('Thumbnail must be a valid URL'),
-  category: z.string().min(2, 'Category is required'),
-  slug: z.string().optional(),
-  readTime: z.string().optional().or(z.literal('')),
+  title: z
+    .string()
+    .min(5, "Title must be at least 5 characters")
+    .max(200, "Title must be at most 200 characters"),
+  excerpt: z
+    .string()
+    .min(20, "Excerpt must be at least 20 characters")
+    .max(500, "Excerpt must be at most 500 characters"),
+  content: z.string().optional().or(z.literal("")),
+  thumbnail: httpUrl,
+  category: z
+    .string()
+    .trim()
+    .min(2, "Category is required")
+    .max(50, "Category must be at most 50 characters"),
+  slug: newsSlugSchema.optional(),
+  readTime: z
+    .string()
+    .max(30, "Read time must be at most 30 characters")
+    .optional()
+    .or(z.literal("")),
   featured: z.boolean().default(false),
-  publishedAt: z.date().or(z.string())
-});
+  publishedAt: z.coerce.date(),
+})
+
+export const createStaffUserSchema = z.object({
+  name: z.string().min(2, "Name is required").max(100),
+  email: z.string().email("Invalid email"),
+  password: z.string().min(10, "Password must be at least 10 characters"),
+})
 
 export const teamMemberSchema = z.object({
   id: z.string().optional(),

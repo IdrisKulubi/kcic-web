@@ -16,33 +16,28 @@ export async function proxy(request: NextRequest) {
     return;
   }
 
-  // Handle admin routes authentication
-  if (pathname.startsWith('/admin')) {
-    // Allow access to login page
-    if (pathname === '/admin/login') {
+  // Handle staff routes authentication
+  if (pathname.startsWith('/staff')) {
+    if (pathname === '/staff/login') {
       return NextResponse.next();
     }
 
-    // Check if user is authenticated
     try {
       const session = await auth.api.getSession({
         headers: request.headers,
       });
 
       if (!session) {
-        // Redirect to login page if not authenticated
         const url = request.nextUrl.clone();
-        url.pathname = '/admin/login';
+        url.pathname = '/staff/login';
         return NextResponse.redirect(url);
       }
 
-      // User is authenticated, allow access
       return NextResponse.next();
     } catch (error) {
       console.error('Auth middleware error:', error);
-      // On error, redirect to login
       const url = request.nextUrl.clone();
-      url.pathname = '/admin/login';
+      url.pathname = '/staff/login';
       return NextResponse.redirect(url);
     }
   }
@@ -60,5 +55,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/fr", "/fr/:path*"],
+  matcher: ["/staff", "/staff/:path*", "/fr", "/fr/:path*"],
 };

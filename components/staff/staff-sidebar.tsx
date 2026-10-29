@@ -25,6 +25,7 @@ import {
   UsersThree,
   Handshake,
   Sparkle,
+  BookOpen,
 } from "@phosphor-icons/react"
 
 interface StaffSidebarProps {
@@ -34,7 +35,10 @@ interface StaffSidebarProps {
   }
 }
 
-const contentNav = [{ href: "/staff/news", label: "News", icon: Newspaper }]
+const contentNav = [
+  { href: "/staff/news", label: "News", icon: Newspaper },
+  { href: "/staff/knowledge-hub", label: "Knowledge Hub", icon: BookOpen },
+]
 
 const plannedNav = [
   { label: "Programmes", icon: Sparkle },

@@ -4,6 +4,7 @@ import {
   listCareerOpportunities,
   listProcurementOpportunities,
 } from "@/lib/actions/opportunities"
+import { listKnowledgeItems } from "@/lib/actions/knowledge-hub"
 import { listNews } from "@/lib/actions/news"
 import { listProgrammes } from "@/lib/actions/programmes"
 import { absoluteUrl } from "@/lib/seo"
@@ -21,6 +22,9 @@ const staticPaths = [
   "/about/careers",
   "/about/policies-disclosures",
   "/about/procurement",
+  "/knowledge-hub/publications",
+  "/knowledge-hub/policy-briefs",
+  "/knowledge-hub/fact-sheets",
 ] as const
 
 function toLastModified(value: Date | string | null | undefined): Date | undefined {
@@ -37,13 +41,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "/" ? 1 : 0.8,
   }))
 
-  const [newsResult, programmesResult, careersResult, procurementResult] =
-    await Promise.all([
-      listNews(),
-      listProgrammes(),
-      listCareerOpportunities(),
-      listProcurementOpportunities(),
-    ])
+  const [
+    newsResult,
+    programmesResult,
+    careersResult,
+    procurementResult,
+    knowledgeResult,
+  ] = await Promise.all([
+    listNews(),
+    listProgrammes(),
+    listCareerOpportunities(),
+    listProcurementOpportunities(),
+    listKnowledgeItems(),
+  ])
 
   if (newsResult.success && newsResult.data) {
     for (const article of newsResult.data.articles) {
@@ -84,6 +94,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: absoluteUrl(`/about/procurement/${item.slug}`),
         lastModified: toLastModified(item.updatedAt) ?? now,
         changeFrequency: "weekly",
+        priority: 0.6,
+      })
+    }
+  }
+
+  if (knowledgeResult.success && knowledgeResult.data) {
+    for (const item of knowledgeResult.data) {
+      entries.push({
+        url: absoluteUrl(`/knowledge-hub/${item.section}/${item.slug}`),
+        lastModified: toLastModified(item.publishedAt) ?? now,
+        changeFrequency: "monthly",
         priority: 0.6,
       })
     }

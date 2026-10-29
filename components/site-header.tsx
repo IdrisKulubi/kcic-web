@@ -243,7 +243,7 @@ const groups: { title: string; items: NavItem[] }[] = [
         icon: Microphone,
       },
       {
-        title: "KCIC on the News",
+        title: "KCIC i n the News",
         description: "KCIC in the headlines",
         href: "/newsroom/media-coverage",
         icon: Broadcast,

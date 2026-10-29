@@ -1,70 +1,78 @@
-import { getImageProps } from "next/image"
+import type { CSSProperties } from "react"
+import Image from "next/image"
 import Link from "next/link"
 
-import heroDesktop from "@/public/hero-desktop.webp"
-import heroMobile from "@/public/hero-mobile.webp"
+import slideSolar from "@/public/hero/slide-1.jpg"
+import slideMobility from "@/public/hero/slide-2.jpg"
+import slideAquaculture from "@/public/hero/slide-3.jpg"
 
-const heroAlt =
-  "Climate enterprises working across agriculture, recycling, solar energy, and electric mobility"
+// Each slide holds for SLIDE_SECONDS, overlapping the next by FADE_SECONDS.
+const SLIDE_SECONDS = 6
+const FADE_SECONDS = 1.5
+
+const slides = [
+  {
+    src: slideSolar,
+    alt: "Rooftop solar panels under a bright blue sky",
+  },
+  {
+    src: slideMobility,
+    alt: "An entrepreneur presenting an electric motorcycle in a workshop",
+  },
+  {
+    src: slideAquaculture,
+    alt: "A team in white lab coats outside a fish processing facility",
+  },
+]
+
+// Pure-CSS crossfade loop: every slide runs the same keyframes, offset by its
+// index. Slides after the first stay hidden until their delay elapses.
+function slideKeyframes(count: number) {
+  const total = count * SLIDE_SECONDS
+  const pct = (seconds: number) => `${((seconds / total) * 100).toFixed(3)}%`
+  return `
+    @keyframes hero-slide {
+      0% { opacity: 0; transform: scale(1.06); }
+      ${pct(FADE_SECONDS)} { opacity: 1; }
+      ${pct(SLIDE_SECONDS)} { opacity: 1; }
+      ${pct(SLIDE_SECONDS + FADE_SECONDS)} { opacity: 0; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+    .hero-slide {
+      opacity: 0;
+      animation: hero-slide ${total}s linear infinite;
+      animation-delay: calc(var(--hero-slide-index) * ${SLIDE_SECONDS}s - ${FADE_SECONDS}s);
+    }
+    .hero-slide:first-child { opacity: 1; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-slide { animation: none; }
+    }
+  `
+}
 
 export function Hero() {
-  const common = { alt: heroAlt, sizes: "100vw" as const }
-  const {
-    props: { srcSet: desktop },
-  } = getImageProps({
-    ...common,
-    src: heroDesktop,
-    width: heroDesktop.width,
-    height: heroDesktop.height,
-    quality: 70,
-  })
-  const {
-    props: { srcSet: mobile, ...rest },
-  } = getImageProps({
-    ...common,
-    src: heroMobile,
-    width: heroMobile.width,
-    height: heroMobile.height,
-    quality: 68,
-  })
-
   return (
     <section
       className="canvas-panel isolate grid min-h-[calc(100svh-2*var(--canvas-gutter))] grid-cols-1 grid-rows-1"
       aria-labelledby="hero-title"
     >
-      <link
-        rel="preload"
-        as="image"
-        imageSrcSet={mobile}
-        imageSizes="100vw"
-        media="(max-width: 767px)"
-        fetchPriority="high"
-      />
-      <link
-        rel="preload"
-        as="image"
-        imageSrcSet={desktop}
-        imageSizes="100vw"
-        media="(min-width: 768px)"
-        fetchPriority="high"
-      />
-      <picture className="absolute inset-0 -z-20">
-        <source media="(max-width: 767px)" srcSet={mobile} sizes="100vw" />
-        <source media="(min-width: 768px)" srcSet={desktop} sizes="100vw" />
-        <img
-          {...rest}
-          alt={heroAlt}
-          className="size-full object-cover object-center"
-          style={{
-            backgroundImage: `url(${heroDesktop.blurDataURL})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-          fetchPriority="high"
-          decoding="async"
-        />
-      </picture>
+      <style>{slideKeyframes(slides.length)}</style>
+      <div className="absolute inset-0 -z-20 overflow-hidden">
+        {slides.map((slide, index) => (
+          <Image
+            key={slide.src.src}
+            src={slide.src}
+            alt={slide.alt}
+            fill
+            sizes="100vw"
+            quality={70}
+            placeholder="blur"
+            preload={index === 0}
+            className="hero-slide object-cover object-center"
+            style={{ "--hero-slide-index": index } as CSSProperties}
+          />
+        ))}
+      </div>
       <div
         aria-hidden="true"
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_85%_70%_at_50%_45%,rgba(18,45,28,0.42)_0%,rgba(18,45,28,0.78)_55%,rgba(18,45,28,0.88)_100%)]"

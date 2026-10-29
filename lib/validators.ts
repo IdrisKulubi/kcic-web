@@ -1,4 +1,5 @@
 import z from "zod";
+import { knowledgeSectionSlugs } from "@/lib/data/knowledge-hub";
 
 
 
@@ -188,3 +189,23 @@ export const ctaBannerSchema = z.object({
   buttonText: z.string().min(2, 'Button text must be at least 2 characters').max(50, 'Button text must be at most 50 characters'),
   buttonHref: z.string().min(1, 'Button link is required')
 });
+export const knowledgeItemSchema = z.object({
+  section: z.enum(knowledgeSectionSlugs, { message: "Choose a Knowledge Hub section" }),
+  title: z
+    .string()
+    .trim()
+    .min(5, "Title must be at least 5 characters")
+    .max(200, "Title must be at most 200 characters"),
+  slug: newsSlugSchema.optional().or(z.literal("")),
+  summary: z
+    .string()
+    .trim()
+    .min(20, "Summary must be at least 20 characters")
+    .max(500, "Summary must be at most 500 characters"),
+  content: z.string().optional().or(z.literal("")),
+  coverImage: httpUrl,
+  attachmentUrl: httpUrl.optional().or(z.literal("")),
+  attachmentName: z.string().max(200).optional().or(z.literal("")),
+  attachmentSize: z.number().int().min(0).nullable().optional(),
+  publishedOn: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a publish date"),
+})

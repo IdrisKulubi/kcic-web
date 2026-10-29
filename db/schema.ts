@@ -302,6 +302,26 @@ export const opportunityAttachments = pgTable("opportunity_attachments", {
   orderIdx: index("opportunity_attachments_order_idx").on(table.order),
 }));
 
+// Knowledge Hub items - publications, policy briefs, fact sheets
+export const knowledgeItems = pgTable("knowledge_items", {
+  id: text("id").primaryKey(),
+  section: text("section").notNull(), // 'publications' | 'policy-briefs' | 'fact-sheets'
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  summary: text("summary").notNull(), // Short brief shown under the title
+  content: text("content"), // Rich HTML article body
+  coverImage: text("cover_image").notNull(),
+  attachmentUrl: text("attachment_url"),
+  attachmentName: text("attachment_name"),
+  attachmentSize: integer("attachment_size"), // in bytes
+  publishedAt: timestamp("published_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  sectionIdx: index("knowledge_items_section_idx").on(table.section),
+  publishedAtIdx: index("knowledge_items_published_at_idx").on(table.publishedAt),
+}));
+
 // Whistleblower Reports table
 export const whistleblowerReports = pgTable("whistleblower_reports", {
   id: text("id").primaryKey(),

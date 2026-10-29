@@ -68,9 +68,6 @@ export function ImpactTheory() {
         <p className="js-theory-fade mt-5 m-0 max-w-[58ch] text-[1.02rem] leading-[1.7] text-[#566159]">
           {impactTheory.intro}
         </p>
-        <p className="js-theory-fade mt-4 m-0 max-w-[58ch] text-sm leading-6 text-[#005a7c]">
-          {impactTheory.diagramNote}
-        </p>
 
         <ol
           className="js-theory-fade mt-12 m-0 flex list-none flex-col gap-0 p-0 lg:mt-16 lg:flex-row lg:items-stretch lg:gap-0"

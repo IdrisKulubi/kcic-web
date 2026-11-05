@@ -5,6 +5,7 @@ import { whistleblowerReports } from '@/db/schema';
 import { eq, desc, like } from "drizzle-orm/sql";
 import { nanoid } from "nanoid";
 import { revalidatePath } from "next/cache";
+import { sendWhistleblowerReportEmail } from "@/lib/email/whistleblower-report-email";
 
 // Types
 export type WhistleblowerCategory = 'fraud' | 'misconduct' | 'safety' | 'harassment' | 'corruption' | 'other';
@@ -79,8 +80,7 @@ export async function submitWhistleblowerReport(input: SubmitReportInput): Promi
         const id = nanoid();
         const referenceNumber = await generateReferenceNumber();
 
-        await db.insert(whistleblowerReports).values({
-            id,
+        const record = {
             referenceNumber,
             category: input.category,
             subject,
@@ -91,10 +91,15 @@ export async function submitWhistleblowerReport(input: SubmitReportInput): Promi
             evidence: input.evidence || null,
             contactEmail: input.contactEmail || null,
             isAnonymous: input.isAnonymous ?? true,
-            status: 'new',
-        });
+        };
+
+        await db.insert(whistleblowerReports).values({ id, ...record, status: 'new' });
 
         revalidatePath('/admin/whistleblower');
+
+        // Forward a copy to the auditors. The report is already saved, so a
+        // failed email is logged but does not fail the submission.
+        await sendWhistleblowerReportEmail({ ...record, submittedAt: new Date() });
 
         return { success: true, referenceNumber };
     } catch (error) {

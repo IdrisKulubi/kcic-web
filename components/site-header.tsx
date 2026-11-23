@@ -498,12 +498,12 @@ export function SiteHeader({ openProgrammesCount }: SiteHeaderProps) {
            
           </ul>
           <Link
-            href="/contact"
+            href="/founders-collective"
             prefetch={false}
             className="flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-[#7fcc2f] px-4 text-[13px] font-semibold text-[#1b241d] no-underline transition-colors duration-150 hover:bg-[#90d44b] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#315e13] max-[1050px]:min-h-12"
             onClick={close}
           >
-            Contact us <ArrowUpRight size={16} weight="bold" />
+            Join Founders Collective <ArrowUpRight size={16} weight="bold" />
           </Link>
         </nav>
       </div>
